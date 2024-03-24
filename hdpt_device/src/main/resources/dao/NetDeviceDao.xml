@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hdpt.device.dao.INetDeviceDao">
+    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.hdUp.NetDeviceDTO">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="m_id" property="mId" jdbcType="INTEGER"/>
+        <result column="longitude" property="longitude" jdbcType="VARCHAR"/>
+        <result column="latitude" property="latitude" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="up_num" property="upNum" jdbcType="INTEGER"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="ac_device_sn" property="acDeviceSn" jdbcType="VARCHAR"/>
+        <result column="ac_device_name" property="acDeviceName" jdbcType="VARCHAR"/>
+        <result column="sortorder_device_name" property="sortorderDeviceName" jdbcType="VARCHAR"/>
+        <result column="model" property="model" jdbcType="VARCHAR"/>
+        <result column="ac_unit" property="acUnit" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="ac_device_hw" property="acDeviceHw" jdbcType="VARCHAR"/>
+        <result column="ac_device_sw" property="acDeviceSw" jdbcType="VARCHAR"/>
+        <result column="ac_mac" property="acMac" jdbcType="VARCHAR"/>
+        <result column="ac_dial_mode" property="acDialMode" jdbcType="VARCHAR"/>
+        <result column="ac_ip" property="acIp" jdbcType="VARCHAR"/>
+        <result column="ac_submask" property="acSubmask" jdbcType="VARCHAR"/>
+        <result column="ac_gateway" property="acGateway" jdbcType="VARCHAR"/>
+        <result column="ac_dns" property="acDns" jdbcType="VARCHAR"/>
+        <result column="ac_current_time" property="acCurrentTime" jdbcType="VARCHAR"/>
+        <result column="ac_runtime" property="acRuntime" jdbcType="VARCHAR"/>
+        <result column="ac_time_zone" property="acTimeZone" jdbcType="VARCHAR"/>
+        <result column="ac_ap_online_num" property="acApOnlineNum" jdbcType="VARCHAR"/>
+        <result column="ac_user_online_num" property="acUserOnlineNum" jdbcType="VARCHAR"/>
+        <result column="ac_online_ap_info" property="acOnlineApInfo" jdbcType="VARCHAR"/>
+        <result column="interval" property="interval" jdbcType="INTEGER"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="display_device_name" property="displayDeviceName" jdbcType="VARCHAR"/>
+
+        <result column="ap_ssid" property="apSsid" jdbcType="VARCHAR"/>
+        <result column="ap_radio" property="apRadio" jdbcType="VARCHAR"/>
+        <result column="ap_ip_list" property="apIpList" jdbcType="VARCHAR"/>
+        <result column="ap_runtime" property="apRuntime" jdbcType="TIMESTAMP"/>
+        <result column="ap_sys_time" property="apSysTime" jdbcType="TIMESTAMP"/>
+        <result column="ap_license_error" property="apLicenseError" jdbcType="VARCHAR"/>
+
+        <result column="display_sortorder" property="displaySortorder" jdbcType="INTEGER"/>
+        <result column="sta_signal" property="staSignal" jdbcType="FLOAT"/>
+        <result column="sta_runtime" property="staRuntime" jdbcType="TIMESTAMP"/>
+        <result column="sta_data_tx_rate" property="staDataTxRate" jdbcType="VARCHAR"/>
+        <result column="sta_data_rx_rate" property="staDataRxRate" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="ac_online_ap_info" property="acOnlineApInfo" jdbcType="VARCHAR"/>
+        <result column="bind_time" property="bindTime" jdbcType="TIMESTAMP"/>
+        <result column="out_time" property="outTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="up_json" property="upJson" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 用来记录分页查询时的所有数据量，避免出现分页查询时需要查询两次 -->
+    <resultMap type="java.lang.Long" id="count">
+        <result column="total"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.noInfo">
+                                    ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id, ac_device_sn, longitude, latitude, province, city, area, address,
+        if(`status` is NULL OR `status`='' ,'0',`status`) as `status` , up_num, url, ac_device_hw, ac_device_sw, ac_mac, ac_dial_mode,
+        ac_ip, ac_submask, ac_gateway, ac_dns, ac_current_time, ac_runtime, ac_time_zone,
+        ac_ap_online_num, ac_user_online_num,device_type,out_time,bind_time,
+        ac_device_name,ac_unit,model,m_id,parent_id,
+        display_device_name,sortorder_device_name, display_sortorder,sta_signal, sta_runtime, sta_data_tx_rate, sta_data_rx_rate,
+        ap_ssid, ap_radio, ap_ip_list, ap_runtime, ap_sys_time, ap_license_error,
+        ac_online_ap_info, remark, `interval` , create_time, update_time
+    </sql>
+    <sql id="Expend_Column_List">
+        up_json
+    </sql>
+    <!-- 自定义SQL语句 -->
+    <select id="mySelect" resultType="map" parameterType="java.lang.String" >
+        ${_parameter}
+    </select>
+    <select id="getPageByExample" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery"
+            resultMap="BaseResultMap,count">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from net_device
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="pageNumAndSize != null">
+            LIMIT ${pageNumAndSize}
+        </if>
+        ;
+        SELECT count(1) AS total from net_device
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>;
+    </select>
+    <insert id="addInfo" parameterType="com.hdpt.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="id" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('netDeviceSeq') AS id;
+        </selectKey>
+        INSERT INTO net_device
+        (id, ac_device_sn, longitude, latitude, province,
+         city, area, address, `status`, up_num,
+         url, ac_device_hw, ac_device_sw, ac_mac, ac_dial_mode,
+         ac_ip, ac_submask, ac_gateway, ac_dns, ac_current_time,
+         ac_runtime, ac_time_zone, ac_ap_online_num, ac_user_online_num, ac_online_ap_info,
+         parent_id,display_device_name, sortorder_device_name,display_sortorder,sta_signal, sta_runtime, sta_data_tx_rate, sta_data_rx_rate,
+         ap_ssid, ap_radio, ap_ip_list, ap_runtime, ap_sys_time, ap_license_error,
+         `interval`,remark, up_json, m_id,create_time)
+        VALUES (#{id,jdbcType=INTEGER},#{acDeviceSn,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR},#{latitude,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},
+        #{city,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{upNum,jdbcType=INTEGER},
+        #{url,jdbcType=VARCHAR},#{acDeviceHw,jdbcType=VARCHAR},#{acDeviceSw,jdbcType=VARCHAR},#{acMac,jdbcType=VARCHAR},#{acDialMode,jdbcType=VARCHAR},
+        #{acIp,jdbcType=VARCHAR},#{acSubmask,jdbcType=VARCHAR},#{acGateway,jdbcType=VARCHAR},#{acDns,jdbcType=VARCHAR},#{acCurrentTime,jdbcType=VARCHAR},
+        #{acRuntime,jdbcType=VARCHAR}, #{acTimeZone,jdbcType=VARCHAR}, #{acApOnlineNum,jdbcType=VARCHAR},#{acUserOnlineNum,jdbcType=VARCHAR},#{acOnlineApInfo,jdbcType=VARCHAR},
+        #{parentId,jdbcType=INTEGER},#{displayDeviceName,jdbcType=VARCHAR},#{sortorderDeviceName,jdbcType=VARCHAR}, #{displaySortorder,jdbcType=INTEGER}, #{staSignal,jdbcType=FLOAT},#{staRuntime,jdbcType=TIMESTAMP},#{staDataRxRate,jdbcType=VARCHAR},#{staDataRxRate,jdbcType=VARCHAR},
+        #{apSsid,jdbcType=VARCHAR},#{apRadio,jdbcType=VARCHAR}, #{apIpList,jdbcType=VARCHAR}, #{apRuntime,jdbcType=TIMESTAMP},#{apSysTime,jdbcType=TIMESTAMP},#{staDataTxRate,jdbcType=VARCHAR},#{staDataTxRate,jdbcType=VARCHAR},
+        #{interval,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR},#{upJson,jdbcType=VARCHAR},#{mId,jdbcType=INTEGER},NOW())
+    </insert>
+    <insert id="saveBatchByNative" keyProperty="id"
+            useGeneratedKeys="true">
+        INSERT INTO net_device
+        (id, ac_device_sn, longitude, latitude, province,
+        city, area, address, `status`, up_num,
+        url, ac_device_hw, ac_device_sw, ac_mac, ac_dial_mode,
+        ac_ip, ac_submask, ac_gateway, ac_dns, ac_current_time,
+        ac_runtime, ac_time_zone, ac_ap_online_num, ac_user_online_num, ac_online_ap_info,
+        `interval`,remark, up_json, m_id,create_time,
+        ac_device_name,out_time,model,device_type,ac_unit)
+        <foreach collection="list" item="item" index="index" separator="union all">
+            select NEXTVAL('netDeviceSeq') as id,#{item.acDeviceSn,jdbcType=VARCHAR} as acDeviceSn, #{item.longitude,jdbcType=VARCHAR} as longitude,#{item.latitude,jdbcType=VARCHAR} as latitude,#{item.province,jdbcType=VARCHAR} as province,
+            #{item.city,jdbcType=VARCHAR} as city,#{item.area,jdbcType=VARCHAR} as area,#{item.address,jdbcType=VARCHAR} as address,#{item.status,jdbcType=VARCHAR} as status,#{item.upNum,jdbcType=INTEGER} as upNum,
+            #{item.url,jdbcType=VARCHAR} as url ,#{item.acDeviceHw,jdbcType=VARCHAR} as acDeviceHw ,#{item.acDeviceSw,jdbcType=VARCHAR} as acDeviceSw,#{item.acMac,jdbcType=VARCHAR} as acMac ,#{item.acDialMode,jdbcType=VARCHAR} as acDialMode,
+            #{item.acIp,jdbcType=VARCHAR} as acIp,#{item.acSubmask,jdbcType=VARCHAR} as acSubmask,#{item.acGateway,jdbcType=VARCHAR} as acGateway,#{item.acDns,jdbcType=VARCHAR} as acDns,#{item.acCurrentTime,jdbcType=VARCHAR} as acCurrentTime ,
+            #{item.acRuntime,jdbcType=VARCHAR} as acRuntime, #{item.acTimeZone,jdbcType=VARCHAR} as acTimeZone, #{item.acApOnlineNum,jdbcType=VARCHAR} as acApOnlineNum,#{item.acUserOnlineNum,jdbcType=VARCHAR} as acUserOnlineNum,#{item.acOnlineApInfo,jdbcType=VARCHAR} as acOnlineApInfo,
+            #{item.interval,jdbcType=INTEGER} as interval1,#{item.remark,jdbcType=VARCHAR} as remark,#{item.upJson,jdbcType=VARCHAR} as upJson,#{item.mId,jdbcType=INTEGER} as mId,NOW() as createTime,
+            #{item.acDeviceName,jdbcType=VARCHAR} as acDeviceName,#{item.outTime,jdbcType=TIMESTAMP} as outTime,#{item.model,jdbcType=VARCHAR} as model,#{item.deviceType,jdbcType=VARCHAR} as deviceType,#{item.acUnit,jdbcType=VARCHAR}  as acUnit
+        </foreach>
+    </insert>
+    <update id="updateStatusByInterval" parameterType="map">
+        UPDATE net_device SET `STATUS`='0'
+        WHERE (DATE_ADD(update_time, INTERVAL `interval` SECOND) &lt; DATE_ADD(NOW(), INTERVAL -`interval` SECOND)  and `interval` >= 0) OR `interval` IS NULL
+    </update>
+    <update id="updateBatchByNative">
+        <foreach collection="list" item="item" separator=";">
+            update
+            `net_device`
+            set
+            `out_time` = #{item.outTime,jdbcType=TIMESTAMP},
+            `model` =#{item.model,jdbcType=VARCHAR} ,
+            `device_type` = #{item.deviceType,jdbcType=VARCHAR},
+            `address` = #{item.address,jdbcType=VARCHAR},
+            `ac_unit` = #{item.acUnit,jdbcType=VARCHAR} ,
+            `remark` = #{item.remark,jdbcType=VARCHAR},
+             update_time=NOW(),
+            `ac_device_sn` = #{item.acDeviceSn,jdbcType=VARCHAR},
+            `ac_device_name` = #{item.acDeviceName,jdbcType=VARCHAR}
+            where
+            ac_mac = #{item.acMac,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+    <update id="updateByExampleSelective" parameterType="map">
+        update net_device
+        <set>
+            update_time=NOW(),
+            up_num=up_num+1,
+            <if test="record != null and record.mId != null">
+                m_id = #{record.mId,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.longitude != null">
+                longitude = #{record.longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.latitude != null">
+                latitude = #{record.latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.province != null">
+                province = #{record.province,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.city != null">
+                city = #{record.city,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.area != null">
+                area = #{record.area,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.address != null">
+                address = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.address != null">
+                address = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.status != null">
+                status = #{record.status,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.interval != null">
+                `interval` = #{record.interval,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.deviceType != null">
+                device_type = #{record.deviceType,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.outTime != null">
+                `out_time` = #{record.outTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.bindTime != null">
+                `bind_time` = #{record.bindTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.acDeviceName != null">
+                `ac_device_name` = #{record.acDeviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.sortorderDeviceName != null">
+                `sortorder_device_name` = #{record.sortorderDeviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acUnit != null">
+                `ac_unit` = #{record.acUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.model != null">
+                `model` = #{record.model,jdbcType=VARCHAR},
+            </if>
+
+            <if test="record != null and record.url != null">
+                url=#{record.url,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acIp != null">
+                ac_ip=#{record.acIp,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acSubmask != null">
+                ac_submask=#{record.acSubmask,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acGateway != null">
+                ac_gateway=#{record.acGateway,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acDns != null">
+                ac_dns=#{record.acDns,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acCurrentTime != null">
+                ac_current_time=#{record.acCurrentTime,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acRuntime != null">
+                ac_runtime = #{record.acRuntime,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acTimeZone != null">
+                ac_time_zone= #{record.acTimeZone,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acApOnlineNum != null">
+                ac_ap_online_num = #{record.acApOnlineNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acUserOnlineNum != null">
+                ac_user_online_num = #{record.acUserOnlineNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acDeviceHw != null">
+                ac_device_hw = #{record.acDeviceHw,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acDeviceSw != null">
+                ac_device_sw = #{record.acDeviceSw,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acDialMode != null">
+                ac_dial_mode = #{record.acDialMode,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acMac != null">
+                ac_mac = #{record.acMac,jdbcType=VARCHAR},
+            </if>
+
+            <if test="record != null and record.parentId != null">
+                `parent_id` = #{record.parentId,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.displayDeviceName != null">
+                `display_device_name` = #{record.displayDeviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.displaySortorder != null">
+                `display_sortorder` = #{record.displaySortorder,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.staSignal != null">
+                `sta_signal` = #{record.staSignal,jdbcType=FLOAT},
+            </if>
+            <if test="record != null and record.staRuntime != null">
+                `sta_runtime` = #{record.staRuntime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.staDataRxRate != null">
+                `sta_data_tx_rate` = #{record.staDataRxRate,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.staDataTxRate != null">
+                `sta_data_rx_rate` = #{record.staDataTxRate,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.acOnlineApInfo!= null">
+                ac_online_ap_info = #{record.acOnlineApInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.upJson != null">
+                up_json = #{record.upJson,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.apSsid != null">
+                `ap_ssid` = #{record.apSsid,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.apRadio != null">
+                `ap_radio` = #{record.apRadio,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.apIpList != null">
+                `ap_ip_list` = #{record.apIpList,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.apRuntime != null">
+                `ap_runtime` = #{record.apRuntime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.apSysTime != null">
+                `ap_sys_time` = #{record.apSysTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.apLicenseError != null">
+                `ap_license_error` = #{record.apLicenseError,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery">
+        delete from net_device
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from net_device
+        where id = #{id,jdbcType=INTEGER }
+    </select>
+    <select id="findByMid" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from net_device
+        where m_id = #{mId,jdbcType=INTEGER }
+    </select>
+    <select id="findProvinceCount" resultMap="BaseResultMap"  >
+        SELECT (
+                   SELECT if(parent_m_id IS NULL,0,parent_m_id)
+                   FROM merchant
+                   WHERE if(merchant.m_id IS NULL,0,merchant.m_id) = if(net_device.m_id IS NULL,0,net_device.m_id)) AS m_id, if(province IS NULL OR province='','',province) as province, COUNT(1) AS  `count` FROM net_device
+        GROUP BY  m_id,if(province IS NULL OR province='','',province)
+    </select>
+    <select id="findAreaCount" resultMap="BaseResultMap"  >
+        SELECT
+            (
+                SELECT if(parent_m_id IS NULL,0,parent_m_id)
+                FROM merchant
+                WHERE if(merchant.m_id IS NULL,0,merchant.m_id) = if(net_device.m_id IS NULL,0,net_device.m_id)) AS m_id,if(province IS NULL OR province='','',province) AS province,if(city IS NULL OR city='','',city) AS city,if(`area`  IS NULL OR `area` ='','',`area` )  AS `area`, COUNT(1) AS  `count` FROM net_device
+        GROUP BY  m_id,if(province IS NULL OR province='','',province),if(city IS NULL OR city='','',city),if(`area`  IS NULL OR `area` ='','',`area` )
+    </select>
+    <select id="findStatusCount" resultMap="BaseResultMap"  >
+        SELECT (
+                   SELECT min(if(parent_m_id IS NULL,0,parent_m_id))
+                   FROM merchant
+                   WHERE if(net_device.m_id IS NULL,0,net_device.m_id) = if(net_device.m_id IS NULL,0,net_device.m_id)) AS m_id,
+               if(`status` IS NULL OR `status`='','0',`status`)  `status`  , COUNT(1) AS  `count`
+        FROM net_device
+        GROUP BY  m_id,if(`status` IS NULL OR `status`='','0',`status`)
+    </select>
+    <select id="findTypeCount" resultMap="BaseResultMap"  >
+        SELECT (
+                   SELECT min(if(parent_m_id IS NULL,0,parent_m_id))
+                   FROM merchant
+                   WHERE if(net_device.m_id IS NULL,0,net_device.m_id) = if(net_device.m_id IS NULL,0,net_device.m_id)) AS m_id,
+               if(`device_type` IS NULL OR `device_type`='','0',`device_type`)  `device_type`  , COUNT(1) AS  `count`
+        FROM net_device
+        GROUP BY  m_id,if(`device_type` IS NULL OR `device_type`='','0',`device_type`)
+    </select>
+    <select id="findList" resultMap="BaseResultMap" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Expend_Column_List"/>
+        from net_device
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <insert id="insertOrUpdate" parameterType="com.hdpt.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="id" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('netDeviceSeq') AS id;
+        </selectKey>
+        insert into net_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="mId != null">
+                m_id,
+            </if>
+            <if test="acDeviceSn != null">
+                ac_device_sn,
+            </if>
+            <if test="longitude != null">
+                longitude ,
+            </if>
+            create_time,
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="upNum != null">
+                up_num,
+            </if>
+            <if test="url != null">
+                `url`,
+            </if>
+            <if test="acDeviceHw != null">
+                ac_device_hw,
+            </if>
+            <if test="acDeviceSw != null">
+                ac_device_sw,
+            </if>
+            <if test="acMac != null">
+                ac_mac,
+            </if>
+            <if test="acDialMode != null">
+                ac_dial_mode,
+            </if>
+            <if test="acIp != null">
+                ac_ip,
+            </if>
+            <if test="acSubmask != null">
+                ac_submask,
+            </if>
+            <if test="acGateway != null">
+                ac_gateway,
+            </if>
+            <if test="acDns != null">
+                ac_dns,
+            </if>
+            <if test="acCurrentTime != null">
+                ac_current_time,
+            </if>
+            <if test="acRuntime != null">
+                ac_runtime,
+            </if>
+            <if test="acTimeZone != null">
+                ac_time_zone,
+            </if>
+            <if test="acApOnlineNum != null">
+                ac_ap_online_num,
+            </if>
+            <if test="acUserOnlineNum != null">
+                ac_user_online_num ,
+            </if>
+            <if test="acOnlineApInfo != null">
+                ac_online_ap_info,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="upJson != null">
+                up_json,
+            </if>
+            <if test="interval != null">
+                `interval`,
+            </if>
+            <if test="deviceType != null">
+                `device_type`,
+            </if>
+            <if test="acDeviceName != null">
+                `ac_device_name`,
+            </if>
+            <if test="acUnit != null">
+                `ac_unit`,
+            </if>
+            <if test="model != null">
+                `model` ,
+            </if>
+            <if test="outTime != null ">
+                `out_time` ,
+            </if>
+            <if test="bindTime != null">
+                `bind_time`,
+            </if>
+            <if test="parentId != null">
+                `parent_id`,
+            </if>
+            <if test="displayDeviceName != null">
+                `display_device_name`,
+            </if>
+            <if test="displaySortorder != null">
+                `display_sortorder` ,
+            </if>
+            <if test="staSignal != null">
+                `sta_signal`,
+            </if>
+            <if test="staRuntime != null">
+                `sta_runtime`,
+            </if>
+            <if test="staDataRxRate != null">
+                `sta_data_tx_rate`,
+            </if>
+            <if test="staDataTxRate != null">
+                `sta_data_rx_rate`,
+            </if>
+            <if test="apSsid != null">
+                `ap_ssid`,
+            </if>
+            <if test="apRadio != null">
+                `ap_radio`,
+            </if>
+            <if test="apIpList != null">
+                `ap_ip_list`,
+            </if>
+            <if test="apRuntime != null">
+                `ap_runtime`,
+            </if>
+            <if test="apSysTime != null">
+                `ap_sys_time`,
+            </if>
+            <if test="apLicenseError != null">
+                `ap_license_error`,
+            </if>
+            <if test="sortorderDeviceName != null">
+                `sortorder_device_name` ,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                #{id,jdbcType=INTEGER},
+            <if test="mId != null">
+                #{mId,jdbcType=INTEGER},
+            </if>
+            <if test="acDeviceSn != null">
+                #{acDeviceSn,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=VARCHAR},
+            </if>
+            NOW(),
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="upNum != null">
+                #{upNum,jdbcType=INTEGER},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="acDeviceHw != null">
+                #{acDeviceHw,jdbcType=VARCHAR},
+            </if>
+            <if test="acDeviceSw != null">
+                #{acDeviceSw,jdbcType=VARCHAR},
+            </if>
+            <if test="acMac != null">
+                #{acMac,jdbcType=VARCHAR},
+            </if>
+            <if test="acDialMode != null">
+                #{acDialMode,jdbcType=VARCHAR},
+            </if>
+            <if test="acIp != null">
+                #{acIp,jdbcType=VARCHAR},
+            </if>
+            <if test="acSubmask != null">
+                #{acSubmask,jdbcType=VARCHAR},
+            </if>
+            <if test="acGateway != null">
+                #{acGateway,jdbcType=VARCHAR},
+            </if>
+            <if test="acDns != null">
+                #{acDns,jdbcType=VARCHAR},
+            </if>
+            <if test="acCurrentTime != null">
+                #{acCurrentTime,jdbcType=VARCHAR},
+            </if>
+            <if test="acRuntime != null">
+                #{acRuntime,jdbcType=VARCHAR},
+            </if>
+            <if test="acTimeZone != null">
+                #{acTimeZone,jdbcType=VARCHAR},
+            </if>
+            <if test="acApOnlineNum != null">
+                #{acApOnlineNum,jdbcType=VARCHAR},
+            </if>
+            <if test="acUserOnlineNum != null">
+                #{acUserOnlineNum,jdbcType=VARCHAR},
+            </if>
+            <if test="acOnlineApInfo != null">
+                #{acOnlineApInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="upJson != null">
+                #{upJson,jdbcType=VARCHAR},
+            </if>
+            <if test="interval != null">
+                #{interval,jdbcType=INTEGER},
+            </if>
+            <if test="deviceType != null ">
+                #{deviceType,jdbcType=VARCHAR},
+            </if>
+            <if test="acDeviceName != null">
+                #{acDeviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="acUnit != null">
+                #{acUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null">
+                #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="outTime != null ">
+                #{outTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="bindTime != null">
+                #{bindTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="displayDeviceName != null">
+               #{displayDeviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="displaySortorder != null">
+                #{displaySortorder,jdbcType=INTEGER},
+            </if>
+            <if test="staSignal != null">
+               #{staSignal,jdbcType=FLOAT},
+            </if>
+            <if test="staRuntime != null">
+               #{staRuntime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="staDataRxRate != null">
+               #{staDataRxRate,jdbcType=VARCHAR},
+            </if>
+            <if test="staDataTxRate != null">
+               #{staDataTxRate,jdbcType=VARCHAR},
+            </if>
+            <if test="apSsid != null">
+               #{apSsid,jdbcType=VARCHAR},
+            </if>
+            <if test="apRadio != null">
+               #{apRadio,jdbcType=VARCHAR},
+            </if>
+            <if test="apIpList != null">
+               #{apIpList,jdbcType=VARCHAR},
+            </if>
+            <if test="apRuntime != null">
+               #{apRuntime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="apSysTime != null">
+               #{apSysTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="apLicenseError != null">
+               #{apLicenseError,jdbcType=VARCHAR},
+            </if>
+            <if test="sortorderDeviceName != null">
+                #{sortorderDeviceName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        update_time=NOW()
+        <if test="mId != null">
+            ,m_id=#{mId,jdbcType=INTEGER}
+        </if>
+        <if test="acDeviceSn != null">
+            ,ac_device_sn=#{acDeviceSn,jdbcType=VARCHAR}
+        </if>
+        <if test="longitude != null">
+            ,longitude=#{longitude,jdbcType=VARCHAR}
+        </if>
+        <if test="latitude != null">
+            ,latitude=#{latitude,jdbcType=VARCHAR}
+        </if>
+        <if test="province != null">
+            ,province=#{province,jdbcType=VARCHAR}
+        </if>
+        <if test="city != null">
+            ,city=#{city,jdbcType=VARCHAR}
+        </if>
+        <if test="area != null">
+            ,area=#{area,jdbcType=VARCHAR}
+        </if>
+        <if test="address != null">
+            ,address=#{address,jdbcType=VARCHAR}
+        </if>
+        <if test="status != null">
+            ,`status`=#{status,jdbcType=VARCHAR}
+        </if>
+            ,up_num=up_num+1
+        <if test="url != null">
+            ,url=#{url,jdbcType=VARCHAR}
+        </if>
+        <if test="acIp != null">
+            ,ac_ip=#{acIp,jdbcType=VARCHAR}
+        </if>
+        <if test="acSubmask != null">
+            ,ac_submask=#{acSubmask,jdbcType=VARCHAR}
+        </if>
+        <if test="acGateway != null">
+            ,ac_gateway=#{acGateway,jdbcType=VARCHAR}
+        </if>
+        <if test="acDns != null">
+            ,ac_dns=#{acDns,jdbcType=VARCHAR}
+        </if>
+        <if test="acCurrentTime != null">
+            ,ac_current_time=#{acCurrentTime,jdbcType=VARCHAR}
+        </if>
+        <if test="acRuntime != null">
+            ,ac_runtime = #{acRuntime,jdbcType=VARCHAR}
+        </if>
+        <if test="acTimeZone != null">
+            ,ac_time_zone= #{acTimeZone,jdbcType=VARCHAR}
+        </if>
+        <if test="acApOnlineNum != null">
+            ,ac_ap_online_num = #{acApOnlineNum,jdbcType=VARCHAR}
+        </if>
+        <if test="acUserOnlineNum != null">
+            ,ac_user_online_num = #{acUserOnlineNum,jdbcType=VARCHAR}
+        </if>
+        <if test="acOnlineApInfo!= null">
+            ,ac_online_ap_info = #{acOnlineApInfo,jdbcType=VARCHAR}
+        </if>
+        <if test="upJson != null">
+            ,up_json = #{upJson,jdbcType=VARCHAR}
+        </if>
+        <if test="remark != null">
+            ,remark = #{remark,jdbcType=VARCHAR}
+        </if>
+        <if test="acDeviceHw != null">
+            ,ac_device_hw = #{acDeviceHw,jdbcType=VARCHAR}
+        </if>
+        <if test="acDeviceSw != null">
+            ,ac_device_sw = #{acDeviceSw,jdbcType=VARCHAR}
+        </if>
+        <if test="acDialMode != null">
+            ,ac_dial_mode = #{acDialMode,jdbcType=VARCHAR}
+        </if>
+        <if test="acMac != null">
+            ,ac_mac = #{acMac,jdbcType=VARCHAR}
+        </if>
+        <if test="interval != null">
+            ,`interval`=#{interval,jdbcType=INTEGER}
+        </if>
+        <if test="deviceType != null ">
+            ,device_type = #{deviceType,jdbcType=VARCHAR}
+        </if>
+        <if test="outTime != null ">
+            ,`out_time` = #{outTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="bindTime != null">
+            ,`bind_time` = #{bindTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="acDeviceName != null">
+            ,`ac_device_name` = #{acDeviceName,jdbcType=VARCHAR}
+        </if>
+        <if test="acUnit != null">
+            ,`ac_unit` =  #{acUnit,jdbcType=VARCHAR}
+        </if>
+        <if test="model != null">
+            ,`model` =  #{model,jdbcType=VARCHAR}
+        </if>
+        <if test="parentId != null">
+            ,`parent_id` = #{parentId,jdbcType=INTEGER}
+        </if>
+        <if test="displayDeviceName != null">
+            ,`display_device_name` = #{displayDeviceName,jdbcType=VARCHAR}
+        </if>
+        <if test="displaySortorder != null">
+            ,`display_sortorder` = #{displaySortorder,jdbcType=INTEGER}
+        </if>
+        <if test="staSignal != null">
+            ,`sta_signal` = #{staSignal,jdbcType=FLOAT}
+        </if>
+        <if test="staRuntime != null">
+            ,`sta_runtime` = #{staRuntime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="staDataRxRate != null">
+            ,`sta_data_tx_rate` = #{staDataRxRate,jdbcType=VARCHAR}
+        </if>
+        <if test="staDataTxRate != null">
+            ,`sta_data_rx_rate` = #{staDataTxRate,jdbcType=VARCHAR}
+        </if>
+        <if test="apSsid != null">
+            ,`ap_ssid` = #{apSsid,jdbcType=VARCHAR}
+        </if>
+        <if test="apRadio != null">
+            ,`ap_radio` = #{apRadio,jdbcType=VARCHAR}
+        </if>
+        <if test="apIpList != null">
+            ,`ap_ip_list` = #{apIpList,jdbcType=VARCHAR}
+        </if>
+        <if test="apRuntime != null">
+            ,`ap_runtime` = #{apRuntime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="apSysTime != null">
+            ,`ap_sys_time` = #{apSysTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="apLicenseError != null">
+            ,`ap_license_error` = #{apLicenseError,jdbcType=VARCHAR}
+        </if>
+        <if test="sortorderDeviceName != null">
+            ,`sortorder_device_name` = #{sortorderDeviceName,jdbcType=VARCHAR}
+        </if>
+    </insert>
+</mapper>

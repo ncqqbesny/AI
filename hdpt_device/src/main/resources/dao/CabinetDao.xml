@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hdpt.device.dao.ICabinetDao">
+    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.Cabinet.CabinetDTO">
+        <result column="cabinet_id" property="cabinetId" jdbcType="INTEGER"/>
+        <result column="m_id" property="mId" jdbcType="INTEGER"/>
+        <result column="open_stauts" property="openStauts" jdbcType="VARCHAR"/>
+        <result column="cabinet_no" property="cabinetNo" jdbcType="VARCHAR"/>
+        <result column="station_no" property="stationNo" jdbcType="VARCHAR"/>
+        <result column="slave_id" property="slaveId" jdbcType="VARCHAR"/>
+        <result column="batch_no" property="batchNo" jdbcType="VARCHAR"/>
+        <result column="cabdesc" property="cabdesc" jdbcType="VARCHAR"/>
+        <result column="cabinet_name" property="cabinetName" jdbcType="VARCHAR"/>
+        <result column="cabinet_status" property="cabinetStatus" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="VARCHAR"/>
+        <result column="latitude" property="latitude" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="is_main" property="isMain" jdbcType="INTEGER"/>
+        <result column="temperature" property="temperature" jdbcType="VARCHAR"/>
+        <result column="humidity" property="humidity" jdbcType="VARCHAR"/>
+        <result column="lock" property="lock" jdbcType="VARCHAR"/>
+        <result column="matter_num" property="matterNum" jdbcType="INTEGER"/>
+        <result column="ventilation" property="ventilation" jdbcType="VARCHAR"/>
+        <result column="ventilation" property="ventilation" jdbcType="VARCHAR"/>
+        <result column="ventilation_fan1" property="ventilationFan1" jdbcType="VARCHAR"/>
+        <result column="ventilation_fan2" property="ventilationFan2" jdbcType="VARCHAR"/>
+        <result column="dehumidification" property="dehumidification" jdbcType="VARCHAR"/>
+        <result column="dehumidification_fan1" property="dehumidificationFan1" jdbcType="VARCHAR"/>
+        <result column="dehumidification_fan2" property="dehumidificationFan2" jdbcType="VARCHAR"/>
+        <result column="dehumidification_hot1" property="dehumidificationHot1" jdbcType="VARCHAR"/>
+        <result column="dehumidification_hot2" property="dehumidificationHot2" jdbcType="VARCHAR"/>
+        <result column="temperature_hight_set" property="temperatureHSet" jdbcType="DOUBLE"/>
+        <result column="humidity_hight_set" property="humidityHSet" jdbcType="DOUBLE"/>
+        <result column="temperature_set" property="temperatureSet" jdbcType="DOUBLE"/>
+        <result column="humidity_set" property="humiditySet" jdbcType="DOUBLE"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="warning_temperature_low" property="warningTemperatureLow" jdbcType="DOUBLE"/>
+        <result column="warning_humidity_low" property="warningHumidityLow" jdbcType="DOUBLE"/>
+        <result column="lock_back_time" property="lockBackTime" jdbcType="DOUBLE"/>
+        <result column="lock_close_try" property="lockCloseTry" jdbcType="DOUBLE"/>
+        <result column="label_discovery" property="labelDiscovery" jdbcType="VARCHAR"/>
+
+        <result column="discharge_air_time_out" property="dischargeAirTimeOut" jdbcType="DOUBLE"/>
+        <result column="dehumidify_time_out" property="dehumidifyTimeOut" jdbcType="DOUBLE"/>
+        <result column="ctl_logic" property="ctlLogic" jdbcType="VARCHAR"/>
+        <result column="run_config" property="runConfig" jdbcType="VARCHAR"/>
+        <result column="ctl_operation" property="ctlOperation" jdbcType="VARCHAR"/>
+        <result column="sensor_no" property="sensorNo" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="state_cantact" property="stateCantact" jdbcType="VARCHAR"/>
+        <result column="state_bolt" property="stateBolt" jdbcType="VARCHAR"/>
+        <result column="light" property="light" jdbcType="VARCHAR"/>
+        <result column="warning_temperature" property="warningTemperature" jdbcType="DOUBLE"/>
+        <result column="warning_humidity" property="warningHumidity" jdbcType="DOUBLE"/>
+        <result column="open_time_out" property="openTimeOut" jdbcType="DOUBLE"/>
+        <result column="auto_lock_time" property="autoLockTime" jdbcType="DOUBLE"/>
+        <result column="run_time" property="runTime" jdbcType="TIMESTAMP"/>
+        <result column="mac" property="mac" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="submask" property="submask" jdbcType="VARCHAR"/>
+        <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
+        <result column="dns" property="dns" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <!-- 用来记录分页查询时的所有数据量，避免出现分页查询时需要查询两次 -->
+    <resultMap type="java.lang.Long" id="cabinetCount">
+        <result column="total"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.noInfo">
+                                    ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        cabinet_id
+        , m_id,station_no,slave_id,cabinet_no, cabdesc,ventilation_fan1,ventilation_fan2,dehumidification_fan1,dehumidification_fan2,dehumidification_hot1,dehumidification_hot2
+        ,warning_temperature_low,warning_humidity_low,lock_back_time,lock_close_try,label_discovery,cabinet_name,version
+    </sql>
+    <sql id="Expend_Column_List">
+        if(`cabinet_status` is NULL OR `cabinet_status`='' ,'0',`cabinet_status`) as `cabinet_status`, longitude, latitude, province, city, area, address,is_main, open_stauts,
+        temperature, humidity, `lock`, matter_num, state_cantact, state_bolt, ventilation,
+        light, dehumidification, run_time, create_time, update_time,open_time_out,auto_lock_time,
+        longitude, latitude, province, city, area, address,
+        ip, mac, submask, gateway, dns,batch_no,url
+    </sql>
+    <sql id="All_Column_List">
+        cabinet_id, m_id, cabinet_no, station_no, slave_id, cabdesc, if(`cabinet_status` is NULL OR `cabinet_status`='' ,'0',`cabinet_status`) as `cabinet_status`, longitude, latitude, province, city, area, address,is_main, open_stauts,
+        temperature, humidity, `lock`, matter_num, state_cantact, state_bolt, ventilation, light, dehumidification,
+        temperature_hight_set, humidity_hight_set, temperature_set, humidity_set, discharge_air_time_out,
+        dehumidify_time_out, ctl_logic, run_config, ctl_operation, sensor_no, run_time, create_time, update_time,
+        warning_temperature,warning_humidity,open_time_out,auto_lock_time,ventilation_fan1,ventilation_fan2,dehumidification_fan1,dehumidification_fan2,dehumidification_hot1,dehumidification_hot2
+       ,warning_temperature_low,warning_humidity_low,lock_back_time,lock_close_try,label_discovery,
+        longitude, latitude, province, city, area, address,batch_no,
+        ip, mac, submask, gateway, dns,url,cabinet_name,version
+    </sql>
+    <select id="getPageByExample" parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery"
+            resultMap="BaseResultMap,cabinetCount">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="All_Column_List"/>
+        from cabinet
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="pageNumAndSize != null">
+            LIMIT ${pageNumAndSize}
+        </if>
+        ;
+        SELECT count(1) AS total from cabinet
+       <if test="_parameter != null">
+        <include refid="Example_Where_Clause"/>
+       </if>;
+    </select>
+    <insert id="addCabinet" parameterType="com.hdpt.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="cabinetId" keyColumn="cabinet_id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('cabinetSeq') AS cabinetId;
+        </selectKey>
+        insert into cabinet ( cabinet_id
+        , m_id,station_no,slave_id,cabinet_no, cabdesc,
+         cabinet_status
+        ,is_main, create_time
+        ,ventilation_fan1,ventilation_fan2,dehumidification_fan1,dehumidification_fan2,dehumidification_hot1,dehumidification_hot2
+        ,warning_temperature_low,warning_humidity_low,lock_back_time,lock_close_try,label_discovery)
+        values (#{cabinetId,jdbcType=INTEGER}, #{mId,jdbcType=INTEGER}, #{stationNo,jdbcType=VARCHAR},#{slaveId,jdbcType=VARCHAR},
+        #{cabinetNo,jdbcType=VARCHAR}, #{cabdesc,jdbcType=VARCHAR},#{cabinetStatus,jdbcType=VARCHAR},#{isMain,jdbcType=INTEGER},
+        NOW(),#{ventilationFan1,jdbcType=VARCHAR},#{ventilationFan2,jdbcType=VARCHAR},#{dehumidificationFan1,jdbcType=VARCHAR},#{dehumidificationFan2,jdbcType=VARCHAR},#{dehumidificationHot1,jdbcType=VARCHAR},#{dehumidificationHot2,jdbcType=VARCHAR}
+        ,warning_temperature_low,warning_humidity_low,lock_back_time,lock_close_try,label_discovery
+        ,#{warningTemperatureLow,jdbcType=DOUBLE},#{warningHumidityLow,jdbcType=DOUBLE},#{lockBackTime,jdbcType=DOUBLE},#{lockCloseTry,jdbcType=DOUBLE},#{labelDiscovery,jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateStatusByInterval" parameterType="map">
+        UPDATE cabinet SET `cabinet_status`='0'
+        WHERE (DATE_ADD(update_time, INTERVAL `interval` SECOND) &lt; DATE_ADD(NOW(), INTERVAL -`interval` SECOND)  and `interval` >= 0) OR `interval` IS NULL
+    </update>
+    <update id="updateByExampleSelective" parameterType="map">
+        update cabinet
+        <set>
+            <if test="record != null and record.mId != null">
+                m_id = #{record.mId,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.stationNo != null">
+                station_no = #{record.stationNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.slaveId != null">
+                slave_id = #{record.slaveId,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.cabinetNo != null">
+                cabinet_no = #{record.cabinetNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.cabdesc != null">
+                cabdesc = #{record.cabdesc,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.cabinetStatus != null">
+                cabinet_status = #{record.cabinetStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.isMain != null">
+                is_main = #{record.isMain,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.light != null">
+                light = #{record.light,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.temperatureHSet != null">
+                temperature_hight_set = #{record.temperatureHSet,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.humidityHSet != null">
+                humidity_hight_set = #{record.humidityHSet,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.temperatureSet != null">
+                temperature_set = #{record.temperatureSet,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.humiditySet != null">
+                humidity_set = #{record.humiditySet,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.updateTime != null">
+                discharge_air_time_out = #{record.updateTime,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.dischargeAirTimeOut != null">
+                dehumidify_time_out = #{record.dischargeAirTimeOut,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.ctlLogic != null">
+                ctl_logic = #{record.ctlLogic,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.runConfig != null">
+                run_config = #{record.runConfig,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.ctlOperation != null">
+                ctl_operation = #{record.ctlOperation,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.sensorNo != null">
+                sensor_no = #{record.sensorNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.openTimeOut != null">
+                open_time_out = #{record.openTimeOut,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.autoLockTime != null">
+                auto_lock_time = #{record.autoLockTime,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.ventilationFan1 != null">
+                ventilation_fan1 = #{record.ventilationFan1,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.ventilationFan2 != null">
+                ventilation_fan2 = #{record.ventilationFan2,jdbcType=VARCHAR},
+            </if>
+
+            <if test="record != null and record.dehumidificationFan1 != null">
+                dehumidification_fan1 = #{record.dehumidificationFan1,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.dehumidificationFan2 != null">
+                dehumidification_fan2 = #{record.dehumidificationFan2,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.dehumidificationHot1 != null">
+                dehumidification_hot1 = #{record.dehumidificationHot1,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.dehumidificationHot2 != null">
+                dehumidification_hot2 = #{record.dehumidificationHot2,jdbcType=VARCHAR},
+            </if>
+
+            <if test="record != null and record.warningTemperatureLow != null">
+                warning_temperature_low = #{record.warningTemperatureLow,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.warningHumidityLow != null">
+                warning_humidity_low = #{record.warningHumidityLow,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.lockBackTime != null">
+                lock_back_time = #{record.lockBackTime,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.lockCloseTry != null">
+                lock_close_try = #{record.lockCloseTry,jdbcType=DOUBLE},
+            </if>
+            <if test="record != null and record.labelDiscovery != null">
+                label_discovery = #{record.labelDiscovery,jdbcType=VARCHAR},
+            </if>
+
+            <if test="record != null and record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.cabinetName != null">
+                cabinet_name = #{record.cabinetName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.version != null">
+                version = #{record.version,jdbcType=VARCHAR},
+            </if>
+
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery">
+        delete from cabinet
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <select id="selectBycabinetId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="All_Column_List"/>
+        from cabinet
+        where cabinet_id = #{cabinetId,jdbcType=INTEGER }
+    </select>
+    <select id="findProvinceCount" resultMap="BaseResultMap"  >
+        SELECT (
+                   SELECT if(parent_m_id IS NULL,0,parent_m_id)
+                   FROM merchant
+                   WHERE if(merchant.m_id IS NULL,0,merchant.m_id) = if(cabinet.m_id IS NULL,0,cabinet.m_id)) AS m_id,if(province IS NULL OR province='','',province) as province, COUNT(province) AS  `count` FROM cabinet
+        GROUP BY  m_id,if(province IS NULL OR province='','',province)
+    </select>
+    <select id="findAreaCount" resultMap="BaseResultMap"  >
+        SELECT
+            (
+                SELECT if(parent_m_id IS NULL,0,parent_m_id)
+                FROM merchant
+                WHERE if(merchant.m_id IS NULL,0,merchant.m_id) = if(cabinet.m_id IS NULL,0,cabinet.m_id)) AS m_id,if(province IS NULL OR province='','',province) AS province,if(city IS NULL OR city='','',city) AS city,if(`area`  IS NULL OR `area` ='','',`area` )  AS `area`, COUNT(1) AS  `count` FROM cabinet
+        GROUP BY  m_id,if(province IS NULL OR province='','',province),if(city IS NULL OR city='','',city),if(`area`  IS NULL OR `area` ='','',`area` )
+    </select>
+    <select id="findStatusCount" resultMap="BaseResultMap"  >
+        SELECT (
+                   SELECT if(parent_m_id IS NULL,0,parent_m_id)
+                   FROM merchant
+                   WHERE if(merchant.m_id IS NULL,0,merchant.m_id) = if(cabinet.m_id IS NULL,0,cabinet.m_id)) AS m_id,
+               if(cabinet_status IS NULL OR cabinet_status='','0',cabinet_status)  cabinet_status, COUNT(1) AS  `count` FROM cabinet
+        GROUP BY  m_id,if(cabinet_status IS NULL OR cabinet_status='','0',cabinet_status)
+    </select>
+    <select id="findByCabinetNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="All_Column_List"/>
+        from cabinet
+        where cabinet_no = #{cabinetNo,jdbcType=VARCHAR }
+    </select>
+    <select id="findListByWhere" resultMap="BaseResultMap"  parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery">
+        select
+        <include refid="All_Column_List"/>
+        from cabinet
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>;
+    </select>
+    <insert id="insertOrUpdate" parameterType="com.hdpt.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="cabinetId" keyColumn="cabinet_id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('cabinetSeq') AS cabinetId;
+        </selectKey>
+        insert into cabinet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                cabinet_id,
+            <if test="cabinetNo != null">
+                cabinet_no,
+            </if>
+            <if test="stationNo != null">
+                station_no,
+            </if>
+            <if test="slaveId != null">
+                slave_id ,
+            </if>
+                create_time,
+            <if test="cabdesc != null">
+                cabdesc,
+            </if>
+            <if test="cabinetStatus != null">
+                cabinet_status,
+            </if>
+            <if test="isMain != null">
+                is_main,
+            </if>
+            <if test="openStauts != null">
+                open_stauts,
+            </if>
+            <if test="runTime != null">
+                run_time,
+            </if>
+            <if test="temperature != null">
+                temperature,
+            </if>
+            <if test="humidity != null">
+                humidity,
+            </if>
+            <if test="lock != null">
+                `lock`,
+            </if>
+            <if test="matterNum != null">
+                matter_num,
+            </if>
+            <if test="ventilation != null">
+                ventilation,
+            </if>
+            <if test="dehumidification != null">
+                dehumidification,
+            </if>
+            <if test="stateCantact != null">
+                state_cantact,
+            </if>
+            <if test="stateBolt != null">
+                state_bolt,
+            </if>
+            <if test="light != null">
+                light,
+            </if>
+            <if test="temperatureHSet != null">
+                temperature_hight_set,
+            </if>
+            <if test="humidityHSet != null">
+                humidity_hight_set,
+            </if>
+            <if test="temperatureSet != null">
+                temperature_set,
+            </if>
+            <if test="humiditySet != null">
+                humidity_set,
+            </if>
+            <if test="dischargeAirTimeOut != null">
+                discharge_air_time_out,
+            </if>
+            <if test="dischargeAirTimeOut != null">
+                dehumidify_time_out,
+            </if>
+            <if test="ctlLogic != null">
+                ctl_logic ,
+            </if>
+            <if test="runConfig != null">
+                run_config,
+            </if>
+            <if test="ctlOperation != null">
+                ctl_operation,
+            </if>
+            <if test="sensorNo != null">
+                sensor_no,
+            </if>
+            <if test="warningTemperature != null">
+                warning_temperature,
+            </if>
+            <if test="warningHumidity != null">
+                warning_humidity,
+            </if>
+            <if test="openTimeOut != null">
+                open_time_out,
+            </if>
+            <if test="autoLockTime != null">
+                auto_lock_time,
+            </if>
+            <if test="ventilationFan1 != null">
+                ventilation_fan1,
+            </if>
+            <if test="ventilationFan2 != null">
+                ventilation_fan2,
+            </if>
+
+            <if test="dehumidificationFan1 != null">
+                dehumidification_fan1 ,
+            </if>
+            <if test="dehumidificationFan2 != null">
+                dehumidification_fan2 ,
+            </if>
+            <if test="dehumidificationHot1 != null">
+                dehumidification_hot1,
+            </if>
+            <if test="dehumidificationHot2 != null">
+                dehumidification_hot2,
+            </if>
+            <if test="warningTemperatureLow != null">
+                warning_temperature_low,
+            </if>
+            <if test="warningHumidityLow != null">
+                warning_humidity_low,
+            </if>
+            <if test="lockBackTime != null">
+                lock_back_time,
+            </if>
+            <if test="lockCloseTry != null">
+                lock_close_try,
+            </if>
+            <if test="labelDiscovery != null">
+                label_discovery,
+            </if>
+            <if test="mac != null">
+                mac,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="submask != null">
+                submask,
+            </if>
+            <if test="gateway != null">
+                gateway,
+            </if>
+            <if test="dns != null">
+                dns,
+            </if>
+            <if test="longitude != null">
+                longitude ,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="batchNo != null">
+                batch_no,
+            </if>
+            <if test="cabinetName != null">
+                cabinet_name,
+            </if>
+            <if test="version != null">
+                version ,
+            </if>
+            <if test="mId != null">
+                m_id ,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                #{cabinetId,jdbcType=INTEGER},
+            <if test="cabinetNo != null">
+                #{cabinetNo,jdbcType=VARCHAR},
+            </if>
+            <if test="stationNo != null">
+                #{stationNo,jdbcType=VARCHAR},
+            </if>
+            <if test="slaveId != null">
+                #{slaveId,jdbcType=VARCHAR},
+            </if>
+                NOW(),
+            <if test="cabdesc != null">
+                #{cabdesc,jdbcType=VARCHAR},
+            </if>
+            <if test="cabinetStatus != null">
+                #{cabinetStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="isMain != null">
+                #{isMain,jdbcType=VARCHAR},
+            </if>
+            <if test="openStauts != null">
+                #{openStauts,jdbcType=VARCHAR},
+            </if>
+            <if test="runTime != null">
+                #{runTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="temperature != null">
+                #{temperature,jdbcType=VARCHAR},
+            </if>
+            <if test="humidity != null">
+                #{humidity,jdbcType=VARCHAR},
+            </if>
+            <if test="lock != null">
+                #{lock,jdbcType=VARCHAR},
+            </if>
+            <if test="matterNum != null">
+                #{matterNum,jdbcType=INTEGER},
+            </if>
+            <if test="ventilation != null">
+                #{ventilation,jdbcType=VARCHAR},
+            </if>
+            <if test="dehumidification != null">
+                #{dehumidification,jdbcType=VARCHAR},
+            </if>
+            <if test="stateCantact != null">
+                #{stateCantact,jdbcType=VARCHAR},
+            </if>
+            <if test="stateBolt != null">
+                #{stateBolt,jdbcType=VARCHAR},
+            </if>
+            <if test="light != null">
+                #{light,jdbcType=VARCHAR},
+            </if>
+            <if test="temperatureHSet != null">
+               #{temperatureHSet,jdbcType=DOUBLE},
+            </if>
+            <if test="humidityHSet != null">
+                #{humidityHSet,jdbcType=DOUBLE},
+            </if>
+            <if test="temperatureSet != null">
+                #{temperatureSet,jdbcType=DOUBLE},
+            </if>
+            <if test="humiditySet != null">
+                #{humiditySet,jdbcType=DOUBLE},
+            </if>
+            <if test="dischargeAirTimeOut != null">
+                #{dischargeAirTimeOut,jdbcType=DOUBLE},
+            </if>
+            <if test="dischargeAirTimeOut != null">
+                #{dischargeAirTimeOut,jdbcType=DOUBLE},
+            </if>
+            <if test="ctlLogic != null">
+                #{ctlLogic,jdbcType=VARCHAR},
+            </if>
+            <if test="runConfig != null">
+               #{runConfig,jdbcType=VARCHAR},
+            </if>
+            <if test="ctlOperation != null">
+               #{ctlOperation,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorNo != null">
+               #{sensorNo,jdbcType=VARCHAR},
+            </if>
+            <if test="warningTemperature != null">
+                #{warningTemperature,jdbcType=DOUBLE},
+            </if>
+            <if test="warningHumidity != null">
+                #{warningTemperature,jdbcType=DOUBLE},
+            </if>
+            <if test="openTimeOut != null">
+                #{openTimeOut,jdbcType=DOUBLE},
+            </if>
+            <if test="autoLockTime != null">
+                #{autoLockTime,jdbcType=DOUBLE},
+            </if>
+            <if test="ventilationFan1 != null">
+                #{ventilationFan1,jdbcType=VARCHAR},
+            </if>
+            <if test="ventilationFan2 != null">
+                #{ventilationFan2,jdbcType=VARCHAR},
+            </if>
+
+            <if test="dehumidificationFan1 != null">
+                #{dehumidificationFan1,jdbcType=VARCHAR},
+            </if>
+            <if test="dehumidificationFan2 != null">
+                #{dehumidificationFan2,jdbcType=VARCHAR},
+            </if>
+            <if test="dehumidificationHot1 != null">
+                #{dehumidificationHot1,jdbcType=VARCHAR},
+            </if>
+            <if test="dehumidificationHot2 != null">
+                #{dehumidificationHot2,jdbcType=VARCHAR},
+            </if>
+            <if test="warningTemperatureLow != null">
+                #{warningTemperatureLow,jdbcType=DOUBLE},
+            </if>
+            <if test="warningHumidityLow != null">
+                #{warningHumidityLow,jdbcType=DOUBLE},
+            </if>
+            <if test="lockBackTime != null">
+                #{lockBackTime,jdbcType=DOUBLE},
+            </if>
+            <if test="lockCloseTry != null">
+                #{lockCloseTry,jdbcType=DOUBLE},
+            </if>
+            <if test="labelDiscovery != null">
+                #{labelDiscovery,jdbcType=VARCHAR},
+            </if>
+            <if test="mac != null">
+                #{mac,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="submask != null">
+                #{submask,jdbcType=VARCHAR},
+            </if>
+            <if test="gateway != null">
+                #{gateway,jdbcType=VARCHAR},
+            </if>
+            <if test="dns != null">
+                #{dns,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=TIMESTAMP},
+            </if>
+            <if test="batchNo != null">
+                #{batchNo,jdbcType=VARCHAR},
+            </if>
+            <if test="cabinetName != null">
+                #{cabinetName,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+               #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="mId != null">
+                #{mId,jdbcType=INTEGER},
+            </if>
+        </trim>
+        ON DUPLICATE KEY UPDATE
+            update_time=NOW()
+        <if test="stationNo != null">
+            ,station_no=#{stationNo,jdbcType=VARCHAR}
+        </if>
+        <if test="slaveId != null">
+            ,slave_id=#{slaveId,jdbcType=VARCHAR}
+        </if>
+        <if test="cabdesc != null">
+            ,cabdesc=#{cabdesc,jdbcType=VARCHAR}
+        </if>
+        <if test="cabinetStatus != null">
+            ,cabinet_status=#{cabinetStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="isMain != null">
+            ,is_main=#{isMain,jdbcType=VARCHAR}
+        </if>
+        <if test="openStauts != null">
+            ,open_stauts=#{openStauts,jdbcType=VARCHAR}
+        </if>
+        <if test="temperature != null">
+            ,temperature=#{temperature,jdbcType=VARCHAR}
+        </if>
+        <if test="humidity != null">
+            ,humidity=#{humidity,jdbcType=VARCHAR}
+        </if>
+        <if test="lock != null">
+            ,`lock`=#{lock,jdbcType=VARCHAR}
+        </if>
+        <if test="matterNum != null">
+            ,matter_num=#{matterNum,jdbcType=INTEGER}
+        </if>
+        <if test="stateCantact != null">
+            ,state_cantact=#{stateCantact,jdbcType=VARCHAR}
+        </if>
+        <if test="stateBolt != null">
+            ,state_bolt=#{stateBolt,jdbcType=VARCHAR}
+        </if>
+        <if test="ventilation != null">
+            ,ventilation=#{ventilation,jdbcType=VARCHAR}
+        </if>
+        <if test="dehumidification != null">
+            ,dehumidification=#{dehumidification,jdbcType=VARCHAR}
+        </if>
+        <if test="runTime != null">
+            ,run_time=#{runTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="light != null">
+            ,light=#{light,jdbcType=VARCHAR}
+        </if>
+        <if test="temperatureHSet != null">
+            ,temperature_hight_set = #{temperatureHSet,jdbcType=DOUBLE}
+        </if>
+        <if test="humidityHSet != null">
+            ,humidity_hight_set = #{humidityHSet,jdbcType=DOUBLE}
+        </if>
+        <if test="temperatureSet != null">
+            ,temperature_set = #{temperatureSet,jdbcType=DOUBLE}
+        </if>
+        <if test="humiditySet != null">
+            ,humidity_set = #{humiditySet,jdbcType=DOUBLE}
+        </if>
+        <if test="dischargeAirTimeOut != null">
+            ,discharge_air_time_out = #{dischargeAirTimeOut,jdbcType=DOUBLE}
+        </if>
+        <if test="dehumidifyTimeOut != null">
+            ,dehumidify_time_out = #{dehumidifyTimeOut,jdbcType=DOUBLE}
+        </if>
+        <if test="ctlLogic != null">
+            ,ctl_logic = #{ctlLogic,jdbcType=VARCHAR}
+        </if>
+        <if test="runConfig != null">
+            ,run_config = #{runConfig,jdbcType=VARCHAR}
+        </if>
+        <if test="ctlOperation != null">
+            ,ctl_operation = #{ctlOperation,jdbcType=VARCHAR}
+        </if>
+        <if test="sensorNo != null">
+            ,sensor_no = #{sensorNo,jdbcType=VARCHAR}
+        </if>
+        <if test="warningTemperature != null">
+            ,warning_temperature = #{warningTemperature,jdbcType=DOUBLE}
+        </if>
+        <if test="warningHumidity != null">
+            ,warning_humidity = #{warningHumidity,jdbcType=DOUBLE}
+        </if>
+        <if test="openTimeOut != null">
+            ,open_time_out = #{openTimeOut,jdbcType=DOUBLE}
+        </if>
+        <if test="autoLockTime != null">
+            ,auto_lock_time = #{autoLockTime,jdbcType=DOUBLE}
+        </if>
+        <if test="ventilationFan1 != null">
+            ,ventilation_fan1=#{ventilationFan1,jdbcType=VARCHAR}
+        </if>
+        <if test="ventilationFan2 != null">
+            ,ventilation_fan2=#{ventilationFan2,jdbcType=VARCHAR}
+        </if>
+
+        <if test="dehumidificationFan1 != null">
+            ,dehumidification_fan1=#{dehumidificationFan1,jdbcType=VARCHAR}
+        </if>
+        <if test="dehumidificationFan2 != null">
+            ,dehumidification_fan2=#{dehumidificationFan2,jdbcType=VARCHAR}
+        </if>
+        <if test="dehumidificationHot1 != null">
+            ,dehumidification_hot1=#{dehumidificationHot1,jdbcType=VARCHAR}
+        </if>
+        <if test="dehumidificationHot2 != null">
+            ,dehumidification_hot2=#{dehumidificationHot2,jdbcType=VARCHAR}
+        </if>
+        <if test="warningTemperatureLow != null">
+            ,warning_temperature_low = #{warningTemperatureLow,jdbcType=DOUBLE}
+        </if>
+        <if test="warningHumidityLow != null">
+            ,warning_humidity_low = #{warningHumidityLow,jdbcType=DOUBLE}
+        </if>
+        <if test="lockBackTime != null">
+            ,lock_back_time = #{lockBackTime,jdbcType=DOUBLE}
+        </if>
+        <if test="lockCloseTry != null">
+            ,lock_close_try = #{lockCloseTry,jdbcType=DOUBLE}
+        </if>
+        <if test="labelDiscovery != null">
+            ,label_discovery = #{labelDiscovery,jdbcType=VARCHAR}
+        </if>
+        <if test="mac != null">
+            ,mac=#{mac,jdbcType=VARCHAR}
+        </if>
+        <if test="ip != null">
+            ,ip=#{ip,jdbcType=VARCHAR}
+        </if>
+        <if test="submask != null">
+            ,submask=#{submask,jdbcType=VARCHAR}
+        </if>
+        <if test="gateway != null">
+            ,gateway=#{gateway,jdbcType=VARCHAR}
+        </if>
+        <if test="dns != null">
+            ,dns=#{dns,jdbcType=VARCHAR}
+        </if>
+        <if test="longitude != null">
+            ,longitude=#{longitude,jdbcType=VARCHAR}
+        </if>
+        <if test="latitude != null">
+            ,latitude=#{latitude,jdbcType=VARCHAR}
+        </if>
+        <if test="province != null">
+            ,province=#{province,jdbcType=VARCHAR}
+        </if>
+        <if test="city != null">
+            ,city=#{city,jdbcType=VARCHAR}
+        </if>
+        <if test="area != null">
+            ,area=#{area,jdbcType=VARCHAR}
+        </if>
+        <if test="address != null">
+            ,address=#{address,jdbcType=VARCHAR}
+        </if>
+            ,url=CONCAT('http://',IFNULL(ip,'127.0.0.1'),':8080/#/')
+        <if test="cabinetName != null">
+            ,cabinet_name = #{cabinetName,jdbcType=VARCHAR}
+        </if>
+        <if test="version != null">
+            ,version = #{version,jdbcType=VARCHAR}
+        </if>
+        <if test="mId != null">
+           ,m_id= #{mId,jdbcType=INTEGER}
+        </if>
+        <if test="batchNo != null">
+            ,batch_no=#{batchNo,jdbcType=VARCHAR}
+        </if>
+    </insert>
+</mapper>

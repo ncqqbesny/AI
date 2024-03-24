@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft.mapp.basecenter.dao.ISysParamDao" >
+  <resultMap id="BaseResultMap" type="com.soft.mapp.basecenter.domain.sysParam.SysPramPo" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="m_id" property="mId" jdbcType="INTEGER" />
+    <result column="param_type" property="paramType" jdbcType="VARCHAR" />
+    <result column="param_code" property="paramCode" jdbcType="VARCHAR" />
+    <result column="param_name" property="paramName" jdbcType="VARCHAR" />
+    <result column="param_val" property="paramVal" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.noInfo">
+                  ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="("
+                           separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="("
+                           separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id,m_id, param_type, param_code,param_name,param_val,status,create_time,update_time
+  </sql>
+    <select id="getSysParamByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_param
+        where param_type = #{paramType,jdbcType=VARCHAR }
+  </select>
+  <select id="getSysParamByTypeAndCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_param
+    where param_type = #{paramType,jdbcType=VARCHAR } and param_code = #{paramCode,jdbcType=VARCHAR }
+  </select>
+  <select id="getSysParamByTypeAndName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_param
+    where param_type = #{paramType,jdbcType=VARCHAR }
+    and param_code = #{paramCode,jdbcType=VARCHAR }
+    and param_name = #{paramName,jdbcType=VARCHAR }
+  </select>
+
+  <select id="getSysParamByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_param
+    where param_name = #{paramName,jdbcType=VARCHAR }
+  </select>
+  <select id="getSysParamByRemark" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_param
+    where remark like #{remark,jdbcType=VARCHAR }
+  </select>
+  <select id="findListByWhere"  parameterType="com.soft.mapp.basecenter.domain.sysParam.SysParamQuery"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_param
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause"/>
+    </if>;
+  </select>
+  <insert id="insertOrUpdate" parameterType="com.soft.mapp.basecenter.domain.sysParam.SysPramPo" keyProperty="id"
+          useGeneratedKeys="true">
+    insert into sys_param
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        m_id,
+      </if>
+      <if test="paramType != null">
+        param_type,
+      </if>
+      <if test="paramCode != null">
+        param_code,
+      </if>
+      <if test="paramName != null">
+        param_name,
+      </if>
+      create_time,
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="paramVal != null">
+        param_val,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        #{mId,jdbcType=INTEGER},
+      </if>
+      <if test="paramType != null">
+        #{paramType,jdbcType=VARCHAR},
+      </if>
+      <if test="paramCode != null">
+        #{paramCode,jdbcType=VARCHAR},
+      </if>
+      <if test="paramName != null">
+        #{paramName,jdbcType=VARCHAR},
+      </if>
+      NOW(),
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paramVal != null">
+        #{paramVal,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    ON DUPLICATE KEY UPDATE
+    update_time=NOW()
+    <if test="mId != null">
+      ,m_id=#{mId,jdbcType=INTEGER}
+    </if>
+    <if test="paramType != null">
+      ,param_type=#{paramType,jdbcType=VARCHAR}
+    </if>
+    <if test="paramCode != null">
+      ,param_code=#{paramCode,jdbcType=VARCHAR}
+    </if>
+    <if test="paramName != null">
+      ,param_name=#{paramName,jdbcType=VARCHAR}
+    </if>
+    <if test="paramVal != null">
+      ,param_val=#{paramVal,jdbcType=VARCHAR}
+    </if>
+    <if test="isValid != null">
+      ,is_valid=#{isValid,jdbcType=VARCHAR}
+    </if>
+    <if test="status != null">
+      ,status=#{status,jdbcType=VARCHAR}
+    </if>
+    <if test="remark != null">
+      ,remark=#{remark,jdbcType=VARCHAR}
+    </if>
+  </insert>
+  <update id="updateByExampleSelective" parameterType="map">
+    update sys_param
+    <set>
+      <if test="record != null and record.mId != null">
+        m_id=#{record.mId,jdbcType=INTEGER},
+      </if>
+      <if test="record != null and record.paramType != null">
+        param_type=#{record.paramType,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.paramCode != null">
+        param_code=#{record.paramCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.paramName != null">
+        param_name=#{record.paramName,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.paramVal != null">
+        param_val=#{record.paramVal,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.isValid != null">
+        is_valid=#{record.isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.status != null">
+        status=#{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.remark != null">
+        remark=#{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null and record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause"/>
+    </if>
+  </update>
+</mapper>

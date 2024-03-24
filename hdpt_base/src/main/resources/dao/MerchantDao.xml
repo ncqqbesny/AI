@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soft.mapp.basecenter.dao.IMerchantDao">
+    <resultMap id="BaseResultMap" type="com.soft.mapp.basecenter.domain.merchant.MerchantPo">
+        <id column="m_id" jdbcType="INTEGER" property="mId"/>
+        <result column="parent_m_id" jdbcType="INTEGER" property="parentMid"/>
+        <result column="is_parent" jdbcType="INTEGER" property="isParent"/>
+        <result column="m_code" jdbcType="VARCHAR" property="mCode"/>
+        <result column="m_name" jdbcType="VARCHAR" property="mName"/>
+        <result column="device" jdbcType="VARCHAR" property="device"/>
+        <result column="m_banner" jdbcType="VARCHAR" property="mBanner"/>
+        <result column="m_balance" jdbcType="DECIMAL" property="mBalance"/>
+        <result column="m_logo" jdbcType="VARCHAR" property="mLogo"/>
+        <result column="m_desc" jdbcType="VARCHAR" property="mDesc"/>
+        <result column="m_status" jdbcType="VARCHAR" property="mStatus"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="wx_small_qrcode_Url" jdbcType="VARCHAR" property="wxSmallQRCodeUrl"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="func_list_id" jdbcType="VARCHAR" property="funcListId"/>
+    </resultMap>
+    <!-- 用来记录分页查询时的所有数据量，避免出现分页查询时需要查询两次 -->
+    <resultMap type="java.lang.Long" id="count">
+        <result column="total"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.noInfo">
+                                    ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        m_id
+        ,
+	  parent_m_id,
+	  is_parent,
+	  device,
+      m_code,
+	  m_name,
+	  m_banner,
+	  m_balance,
+	  m_logo,
+	  m_desc,
+	  m_status,
+	  address,
+      wx_small_qrcode_Url,
+	  create_time,
+	  update_time,
+	  func_list_id
+    </sql>
+    <select id="getPageMerchant" parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantQuery"
+            resultMap="BaseResultMap,count">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        SQL_CALC_FOUND_ROWS
+        <include refid="Base_Column_List"/>
+        from merchant
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="pageNumAndPageSize != null">
+            LIMIT ${pageNumAndPageSize}
+        </if>
+        ;
+        SELECT count(1) AS total from merchant
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        ;
+    </select>
+    <select id="findListByWhere" resultMap="BaseResultMap"
+            parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from merchant
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from merchant
+        where m_id = #{mid,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantQuery">
+        delete from merchant
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="addMerchant" parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantPo">
+        <selectKey keyProperty="mId" keyColumn="m_id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into merchant (parent_m_id, is_parent, m_name,
+        m_desc, m_status, address,m_code,wx_small_qrcode_Url,
+        create_time,device)
+        values (#{parentMid,jdbcType=BIGINT}, #{isParent,jdbcType=BIGINT}, #{mName,jdbcType=VARCHAR},
+        #{mDesc,jdbcType=VARCHAR}, #{mStatus,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{mCode,jdbcType=VARCHAR},#{wxSmallQRCodeUrl,jdbcType=VARCHAR},
+        NOW(), #{device,jdbcType=VARCHAR})
+    </insert>
+    <select id="countByExample" parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantQuery"
+            resultType="java.lang.Long">
+        select count(*) from merchant
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update merchant
+        <set>
+            <if test="record != null and record.parentMid != null">
+                parent_m_id = #{record.parentMid,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.isParent != null">
+                is_parent = #{record.isParent,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.mName != null">
+                m_name = #{record.mName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.device != null">
+                device = #{record.device,jdbcType=VARCHAR},
+            </if>
+            <if test="record.mBanner != null">
+                m_banner = #{record.mBanner,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.mBalance != null">
+                m_balance = #{record.mBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="record != null and record.mLogo != null">
+                m_logo = #{record.mLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.mDesc != null">
+                m_desc = #{record.mDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.mStatus != null">
+                m_status = #{record.mStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.address != null">
+                address = #{record.address,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.wxSmallQRCodeUrl != null">
+                wx_small_qrcode_Url = #{record.wxSmallQRCodeUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record != null and record.funcListId != null">
+                func_list_id = #{record.funcListId,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record != null and record.mCode != null">
+                m_code = #{record.mCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <insert id="insertOrUpdate" parameterType="com.soft.mapp.basecenter.domain.merchant.MerchantPo" keyProperty="mId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="mId" keyColumn="m_id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into merchant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            m_id,
+            create_time,
+            <if test="parentMid != null">
+                parent_m_id,
+            </if>
+            <if test="isParent != null">
+                is_parent,
+            </if>
+            <if test="mName != null">
+                m_name,
+            </if>
+            <if test="device != null">
+                device ,
+            </if>
+            <if test="mBanner != null">
+                m_banner,
+            </if>
+            <if test="mBalance != null">
+                m_balance,
+            </if>
+            <if test="mLogo != null">
+                m_logo ,
+            </if>
+            <if test="mDesc != null">
+                m_desc ,
+            </if>
+            <if test="mStatus != null">
+                m_status ,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="wxSmallQRCodeUrl != null">
+                wx_small_qrcode_Url,
+            </if>
+            <if test="funcListId != null">
+                func_list_id ,
+            </if>
+            <if test="mCode != null">
+                m_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+              #{mId,jdbcType=INTEGER},
+               NOW(),
+            <if test="parentMid != null">
+                #{parentMid,jdbcType=INTEGER},
+            </if>
+            <if test="isParent != null">
+                #{isParent,jdbcType=INTEGER},
+            </if>
+            <if test="mName != null">
+                #{mName,jdbcType=VARCHAR},
+            </if>
+            <if test="device != null">
+                #{device,jdbcType=VARCHAR},
+            </if>
+            <if test="mBanner != null">
+                #{mBanner,jdbcType=VARCHAR},
+            </if>
+            <if test="mBalance != null">
+                #{mBalance,jdbcType=DECIMAL},
+            </if>
+            <if test="mLogo != null">
+                #{mLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="mDesc != null">
+                #{mDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="mStatus != null">
+                #{mStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="wxSmallQRCodeUrl != null">
+                #{wxSmallQRCodeUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="funcListId != null">
+                #{funcListId,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="mCode != null">
+                #{mCode,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        update_time=NOW()
+        <if test="mId != null">
+            ,m_id=#{mId,jdbcType=INTEGER}
+        </if>
+        <if test="parentMid != null">
+            ,parent_m_id = #{parentMid,jdbcType=INTEGER}
+        </if>
+        <if test="isParent != null">
+            ,is_parent = #{isParent,jdbcType=INTEGER}
+        </if>
+        <if test="mName != null">
+            ,m_name = #{mName,jdbcType=VARCHAR}
+        </if>
+        <if test="device != null">
+            ,device = #{device,jdbcType=VARCHAR}
+        </if>
+        <if test="mBanner != null">
+            ,m_banner = #{mBanner,jdbcType=VARCHAR}
+        </if>
+        <if test="mBalance != null">
+            ,m_balance = #{mBalance,jdbcType=DECIMAL}
+        </if>
+        <if test="mLogo != null">
+            ,m_logo = #{mLogo,jdbcType=VARCHAR}
+        </if>
+        <if test="mDesc != null">
+            ,m_desc = #{mDesc,jdbcType=VARCHAR}
+        </if>
+        <if test="mStatus != null">
+            ,m_status = #{mStatus,jdbcType=VARCHAR}
+        </if>
+        <if test="address != null">
+            ,address = #{address,jdbcType=VARCHAR}
+        </if>
+        <if test="wxSmallQRCodeUrl != null">
+            ,wx_small_qrcode_Url = #{wxSmallQRCodeUrl,jdbcType=VARCHAR}
+        </if>
+        <if test="funcListId != null">
+            ,func_list_id = #{funcListId,jdbcType=LONGVARCHAR}
+        </if>
+        <if test="mCode != null">
+            ,m_code = #{mCode,jdbcType=LONGVARCHAR}
+        </if>
+    </insert>
+</mapper>

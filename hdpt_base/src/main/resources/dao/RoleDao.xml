@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft.mapp.basecenter.dao.IRoleDao">
+    <resultMap id="BaseResultMap" type="com.soft.mapp.basecenter.domain.loginVo.RoleDTO">
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="menu_ids" property="menuIds" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="m_id" property="mId" jdbcType="INTEGER"/>
+        <result column="menu_ids" property="menuIds" jdbcType="VARCHAR"/>
+        <result column="role_status" property="roleStatus" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <!-- 用来记录分页查询时的所有数据量，避免出现分页查询时需要查询两次 -->
+    <resultMap type="java.lang.Long" id="roleCount">
+        <result column="total"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.noInfo">
+                                    ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        role_id
+        ,
+    role_name,
+    menu_ids,
+    m_id,
+    description,
+    role_status,
+    create_time,
+    update_time
+    </sql>
+    <select id="getPageRole" parameterType="com.soft.mapp.basecenter.domain.loginVo.RoleQuery"
+            resultMap="BaseResultMap,roleCount">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        SQL_CALC_FOUND_ROWS
+        <include refid="Base_Column_List"/>
+        from role
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="pageNumAndSize != null">
+            LIMIT ${pageNumAndSize}
+        </if>
+        ;
+        SELECT count(1) AS total from role
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        ;
+    </select>
+    <insert id="addRole" parameterType="com.soft.mapp.basecenter.domain.loginVo.RoleDTO">
+        <selectKey keyProperty="roleId" keyColumn="role_id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into role (role_name, m_id, description,
+        menu_ids, role_status, create_time)
+        values (#{roleName,jdbcType=VARCHAR}, #{mId,jdbcType=BIGINT}, #{description,jdbcType=VARCHAR},
+        #{menuIds,jdbcType=VARCHAR}, #{roleStatus,jdbcType=VARCHAR},NOW())
+    </insert>
+    <update id="updateByExampleSelective" parameterType="map">
+        update role
+        <set>
+            <if test="record != null and record.roleName != null">
+                role_name = #{record.roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.mId != null">
+                m_id = #{record.mId,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.description != null">
+                description = #{record.description,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.menuIds != null">
+                menu_ids = #{record.menuIds,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.roleStatus != null">
+                role_status = #{record.roleStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.updateTime != null">
+                update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <delete id="deleteByExample" parameterType="com.soft.mapp.basecenter.domain.loginVo.RoleQuery">
+        delete from role
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        where role_id = #{roleId,jdbcType=INTEGER }
+    </select>
+    <select id="findByRoleName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        where role_name = #{role_name,jdbcType=VARCHAR }
+    </select>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+    </select>
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete
+        from role
+        where EXISTS(
+                      SELECT 1
+                      FROM user_role
+                      WHERE role.role_id = user_role.role_id
+                        AND user_role.user_id = #{userId,jdbcType=INTEGER })
+    </delete>
+    <select id="findByUserid" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from role r
+        where EXISTS (
+        SELECT 1
+        FROM user_role ur
+        WHERE r.role_id=ur.role_id AND ur.user_id=#{userId,jdbcType=INTEGER })
+    </select>
+    <select id="getRoleByMenu" parameterType="map" resultMap="BaseResultMap">
+        SELECT t.role_id,t.role_name,t.description
+        FROM (
+        SELECT r.*, GROUP_CONCAT(m.menu_name) AS menu_name, GROUP_CONCAT(m.static_router) AS static_router
+        FROM role r
+        JOIN menu m ON FIND_IN_SET(m.menu_id,r.menu_ids)
+        GROUP BY r.role_id) t WHERE 1=1
+        <if test="record != null and record.menuName != null">
+            and t.menu_name LIKE concat('%',#{record.menuName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="record != null and record.staticRouter != null">
+            and t.static_router LIKE concat('%',#{record.staticRouter,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+    <select id="findListByWhere" resultMap="BaseResultMap"
+            parameterType="com.soft.mapp.basecenter.domain.loginVo.RoleQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+</mapper>
