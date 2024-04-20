@@ -20,6 +20,7 @@ public class BaseConst {
     public static int LOG_SATUS_ERROR = 0;
 
     public static int LOG_TYPE_TASK = 3;
+    public static int LOG_TYPE_HT = 1;
     public static int LOG_TYPE_ERROR = 3;
 
     public static int LOG_OP_TYPE_QUERY = 2;
