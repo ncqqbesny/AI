@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.IUserRoleDao" >
-  <resultMap id="BaseResultMap" type="com.hdpt.device.domain.loginVo.UserRole" >
+<mapper namespace="com.app.device.dao.IUserRoleDao" >
+  <resultMap id="BaseResultMap" type="com.app.device.domain.loginVo.UserRole" >
   <result column="user_id" property="userId" jdbcType="INTEGER" />
   <result column="role_id" property="roleId" jdbcType="INTEGER" />
 </resultMap>
@@ -69,11 +69,11 @@
   <sql id="Base_Column_List" >
     user_id, role_id
   </sql>
-  <insert id="addUserRole" parameterType="com.hdpt.device.domain.loginVo.UserRole">
+  <insert id="addUserRole" parameterType="com.app.device.domain.loginVo.UserRole">
     insert into user_role (user_id, role_id)
     values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER})
   </insert>
-  <delete id="deleteByExample" parameterType="com.hdpt.device.domain.loginVo.UserRoleQuery">
+  <delete id="deleteByExample" parameterType="com.app.device.domain.loginVo.UserRoleQuery">
     delete from user_role
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

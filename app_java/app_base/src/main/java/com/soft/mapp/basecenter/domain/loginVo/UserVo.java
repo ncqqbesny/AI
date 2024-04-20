@@ -15,10 +15,10 @@ public  class UserVo extends  UserInfoVo {
     @ApiModelProperty(value = "用户id")
     @CustomTag(desc = "用户id")
     private Integer userId;
-    @ApiModelProperty(value = "用户名,必填项")
+    @ApiModelProperty(value = "用户名(必填项)")
     @CustomTag(desc = "用户名")
     private  String username;
-    @ApiModelProperty(value = "姓名" )
+    @ApiModelProperty(value = "姓名(必填项)" )
     @CustomTag(desc = "姓名")
     private  String name;
     @ApiModelProperty(value = "用户类型：1、网页注册用户，4，小程序注册用户，5、公众号注册用户")
@@ -30,7 +30,7 @@ public  class UserVo extends  UserInfoVo {
     @ApiModelProperty(value = "邮箱")
     @CustomTag(desc = "邮箱")
     private  String email;
-    @ApiModelProperty(value = "联系电话")
+    @ApiModelProperty(value = "联系电话 (必填项)")
     @CustomTag(desc = "联系电话")
     private  String telephone;
     @ApiModelProperty(value = "密码")

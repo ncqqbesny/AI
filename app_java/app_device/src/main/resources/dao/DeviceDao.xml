@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.IDeviceDao">
+<mapper namespace="com.app.device.dao.IDeviceDao">
     <!-- 自定义SQL语句 -->
     <select id="mySelect" resultType="map" parameterType="java.lang.String">
         ${_parameter}

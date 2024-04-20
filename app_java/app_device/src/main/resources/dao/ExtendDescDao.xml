@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.IExtendDescDao">
-    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.Device.ExtendDescDTO">
+<mapper namespace="com.app.device.dao.IExtendDescDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.Device.ExtendDescDTO">
         <result column="GID" property="gid" jdbcType="VARCHAR"/>
         <result column="MID" property="mId" jdbcType="VARCHAR"/>
         <result column="DEVICETYPEGID" property="deviceTypeGid" jdbcType="VARCHAR"/>
@@ -114,7 +114,7 @@
     <select id="mySelect" resultType="map" parameterType="java.lang.String" >
         ${_parameter}
     </select>
-    <select id="getPageByExample" parameterType="com.hdpt.device.domain.Device.ExtendDescQuery"
+    <select id="getPageByExample" parameterType="com.app.device.domain.Device.ExtendDescQuery"
             resultMap="BaseResultMap,extendDescCount">
         select
         <if test="distinct">
@@ -137,7 +137,7 @@
             <include refid="Example_Where_Clause"/>
         </if>;
     </select>
-    <insert id="addInfo" parameterType="com.hdpt.device.domain.Device.ExtendDescDTO" keyProperty="id"
+    <insert id="addInfo" parameterType="com.app.device.domain.Device.ExtendDescDTO" keyProperty="id"
             useGeneratedKeys="true">
         INSERT INTO t_extenddesc
         (GID, MID, DEVICETYPEGID, DEVICETYPECODE, EXTDATAMODULE,
@@ -256,7 +256,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.Device.ExtendDescQuery">
+    <delete id="deleteByExample" parameterType="com.app.device.domain.Device.ExtendDescQuery">
         delete from t_extenddesc
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -274,7 +274,7 @@
         from t_extenddesc
         where MID = #{mId,jdbcType=INTEGER }
     </select>
-    <select id="findList" resultMap="BaseResultMap" parameterType="com.hdpt.device.domain.Device.ExtendDescQuery">
+    <select id="findList" resultMap="BaseResultMap" parameterType="com.app.device.domain.Device.ExtendDescQuery">
         select
         <include refid="Base_Column_List"/>
         ,
@@ -287,7 +287,7 @@
             order by ${orderByClause}
         </if>
     </select>
-    <insert id="insertOrUpdate" parameterType="com.hdpt.device.domain.Device.ExtendDescDTO" keyProperty="id"
+    <insert id="insertOrUpdate" parameterType="com.app.device.domain.Device.ExtendDescDTO" keyProperty="id"
             useGeneratedKeys="true">
         insert into t_extenddesc
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.IUserDao">
-    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.loginVo.User">
+<mapper namespace="com.app.device.dao.IUserDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.loginVo.User">
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
         <result column="password" property="password" jdbcType="VARCHAR"/>
@@ -19,7 +19,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <resultMap id="BaseResultMapDTO" type="com.hdpt.device.domain.loginVo.UserDTO">
+    <resultMap id="BaseResultMapDTO" type="com.app.device.domain.loginVo.UserDTO">
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="username" property="username" jdbcType="VARCHAR"/>
         <result column="password" property="password" jdbcType="VARCHAR"/>
@@ -111,7 +111,7 @@
         m_id,open_id,nick_name,wx_headurl,unionid
         , name,user_status,email, telephone,create_time,update_time
     </sql>
-    <select id="getPageUser" parameterType="com.hdpt.device.domain.loginVo.UserQuery"
+    <select id="getPageUser" parameterType="com.app.device.domain.loginVo.UserQuery"
             resultMap="BaseResultMapDTO,userCount">
         select
         <if test="distinct">
@@ -136,7 +136,7 @@
             <include refid="Example_Where_Clause"/>
         </if>;
     </select>
-    <insert id="addUser" parameterType="com.hdpt.device.domain.loginVo.UserDTO" keyProperty="userId"
+    <insert id="addUser" parameterType="com.app.device.domain.loginVo.UserDTO" keyProperty="userId"
             useGeneratedKeys="true">
         <selectKey keyProperty="userId" keyColumn="user_id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('userSeq') AS userId;
@@ -195,7 +195,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.loginVo.UserQuery">
+    <delete id="deleteByExample" parameterType="com.app.device.domain.loginVo.UserQuery">
         delete from user
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>

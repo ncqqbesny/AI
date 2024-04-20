@@ -16,7 +16,7 @@ public  class UserInfoVo  extends WxUserDTO {
     @ApiModelProperty(value = "用户id")
     @CustomTag(desc = "用户id")
     private Integer userId;
-    @ApiModelProperty(value = "公司名称 必填项")
+    @ApiModelProperty(value = "公司名称 ")
     @CustomTag(desc = "公司名称")
     private  String companyName;
     @ApiModelProperty(value = "地址")

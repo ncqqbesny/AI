@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.ICabinetDao">
-    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.Cabinet.CabinetDTO">
+<mapper namespace="com.app.device.dao.ICabinetDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.Cabinet.CabinetDTO">
         <result column="cabinet_id" property="cabinetId" jdbcType="INTEGER"/>
         <result column="m_id" property="mId" jdbcType="INTEGER"/>
         <result column="open_stauts" property="openStauts" jdbcType="VARCHAR"/>
@@ -156,7 +156,7 @@
         longitude, latitude, province, city, area, address,batch_no,
         ip, mac, submask, gateway, dns,url,cabinet_name,version
     </sql>
-    <select id="getPageByExample" parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery"
+    <select id="getPageByExample" parameterType="com.app.device.domain.Cabinet.CabinetQuery"
             resultMap="BaseResultMap,cabinetCount">
         select
         <if test="distinct">
@@ -179,7 +179,7 @@
         <include refid="Example_Where_Clause"/>
        </if>;
     </select>
-    <insert id="addCabinet" parameterType="com.hdpt.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
+    <insert id="addCabinet" parameterType="com.app.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
             useGeneratedKeys="true">
         <selectKey keyProperty="cabinetId" keyColumn="cabinet_id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('cabinetSeq') AS cabinetId;
@@ -315,7 +315,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery">
+    <delete id="deleteByExample" parameterType="com.app.device.domain.Cabinet.CabinetQuery">
         delete from cabinet
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -356,7 +356,7 @@
         from cabinet
         where cabinet_no = #{cabinetNo,jdbcType=VARCHAR }
     </select>
-    <select id="findListByWhere" resultMap="BaseResultMap"  parameterType="com.hdpt.device.domain.Cabinet.CabinetQuery">
+    <select id="findListByWhere" resultMap="BaseResultMap"  parameterType="com.app.device.domain.Cabinet.CabinetQuery">
         select
         <include refid="All_Column_List"/>
         from cabinet
@@ -364,7 +364,7 @@
             <include refid="Example_Where_Clause"/>
         </if>;
     </select>
-    <insert id="insertOrUpdate" parameterType="com.hdpt.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
+    <insert id="insertOrUpdate" parameterType="com.app.device.domain.Cabinet.CabinetDTO" keyProperty="cabinetId"
             useGeneratedKeys="true">
         <selectKey keyProperty="cabinetId" keyColumn="cabinet_id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('cabinetSeq') AS cabinetId;

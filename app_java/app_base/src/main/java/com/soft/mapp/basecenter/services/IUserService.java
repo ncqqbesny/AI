@@ -1,6 +1,7 @@
 package com.soft.mapp.basecenter.services;
 
 import com.soft.mapp.basecenter.domain.loginVo.User;
+import com.soft.mapp.basecenter.domain.loginVo.UserQueryVo;
 import com.soft.mapp.basecenter.domain.loginVo.UserVo;
 import com.soft.mapp.basecenter.handler.CommonPage;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 public interface IUserService {
     Map<String, Object> getUserInfo();
 
-    User selectByuserId(Integer userId);
+    UserQueryVo selectByuserId(Integer userId);
 
     int addUser(UserVo user);
     //是否存在 User

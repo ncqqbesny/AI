@@ -2,6 +2,7 @@ package com.soft.mapp.basecenter.impl.services;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import com.soft.mapp.basecenter.dao.*;
 import com.soft.mapp.basecenter.domain.Wechat.WxUserDTO;
 import com.soft.mapp.basecenter.domain.loginVo.*;
@@ -79,14 +80,21 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User selectByuserId(Integer userId) {
+    public UserQueryVo selectByuserId(Integer userId) {
+        UserQueryVo userQueryVo=new UserQueryVo();
         User user = userDao.selectByuserId(userId);
         if (null == user) {
-            return user;
+            return userQueryVo;
         }
         List<RoleDTO> roles = roleDao.findByUserid(user.getUserId());
         getRoles(roles, user);  //角色
-        return user;
+        List<Integer> roleIds=new ArrayList<>();
+        BeanUtils.copyProperties(user,userQueryVo);
+        for(RoleDTO roleDTO:roles){
+            roleIds.add(roleDTO.getRoleId());
+        }
+        userQueryVo.setRoleIds(roleIds);
+        return userQueryVo;
 
     }
 
@@ -134,10 +142,11 @@ public class UserServiceImpl implements IUserService {
         }
         //再用电话号码查询一次
         UserQuery userQuery1 = new UserQuery();
+        List<User> existUsers1=new ArrayList<>();
         if (StringUtils.isNotEmpty(user.getTelephone())) {
             userQuery1.createCriteria().andTelephoneEqualTo(user.getTelephone());
+            existUsers1 = userDao.findListByWhere(userQuery1);
         }
-        List<User> existUsers1 = userDao.findListByWhere(userQuery1);
         if (!CollectionUtils.isEmpty(existUsers1)) {
             return existUsers1;
         }
@@ -180,18 +189,14 @@ public class UserServiceImpl implements IUserService {
      */
     private String saveUserCorrelation(UserVo user) {
         List<User> findUsers = findExistUser(user);
-        user.setMId(null);
+        String msg="";
+        //user.setMId(null);
         //保存项目mid的判断
-        if (!CollectionUtils.isEmpty(findUsers)) {
+        if (!CollectionUtils.isEmpty(findUsers) && StringUtil.isEmpty(user.getMId())) {
             user.setMId(findUsers.get(0).getMId());
             user.setOpenId(findUsers.get(0).getOpenId());
         }
-        //保存项目
-        String msg = installAndUpdateMerchantByUser(user);
-        if (StringUtil.isNotEmptyString(msg)) {
-            log.info("updateByExampleSelective--保存项目失败==" + msg);
-            return "保存项目失败";
-        }
+
         //保存用户信息
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(user, userDTO);
@@ -218,17 +223,13 @@ public class UserServiceImpl implements IUserService {
         }
         user.setUsername(userDTO.getUsername());
         user.setName(userDTO.getName());
+        //保存角色关系
+        String msg1=installAndUpddateRoleByUser(user);
         //微信用户信息保存
         msg = saveWxUser(user);
         if (StringUtil.isNotEmptyString(msg)) {
             log.info("updateByExampleSelective--保存微信信息失败==" + msg);
             return "保存微信信息失败";
-        }
-        //保存角色
-        msg = installAndUpddateRoleByUser(user);
-        if (StringUtil.isNotEmptyString(msg)) {
-            log.info("updateByExampleSelective--保存角色和角色关系失败==" + msg);
-            return "保存角色和角色关系失败";
         }
         //保存公司信息
         msg = saveUserInfo(user);
@@ -310,7 +311,7 @@ public class UserServiceImpl implements IUserService {
             count = userInfoDao.updateByExampleSelective(userInfoDTO, userInfoQuery);
         } else {
             if (StringUtils.isEmpty(user.getCompanyName())) {
-                userInfoDTO.setCompanyName("默认注册公司");
+                userInfoDTO.setCompanyName("默认公司");
             } else {
                 userInfoDTO.setCompanyName(user.getCompanyName());
             }
@@ -332,80 +333,23 @@ public class UserServiceImpl implements IUserService {
      * @return
      */
     private String installAndUpddateRoleByUser(UserVo user) {
-        //添加默认角色
-        RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setmId(user.getMId());
-        if (StringUtils.isNotEmpty(user.getName())) {
-            roleDTO.setRoleName(user.getName() + "_管理员");
-        } else {
-            roleDTO.setRoleName(user.getUsername() + "_项目管理员");
+
+        if(CollectionUtil.isEmpty(user.getRoleIds())){
+            return "没有角色信息，不需要绑定";
         }
-        if (StringUtils.isEmpty(user.getUsername())) {
-            roleDTO.setDescription("创建默认角色");
-        } else {
-            roleDTO.setDescription(user.getUsername() + "_创建默认角色");
-        }
-        roleDTO.setRoleStatus("1");
-        //排除不要显示菜单内容
-        StringBuilder outMenuSb = new StringBuilder();
-        List<SysPramPo> sysPramPos = sysParamDao.getSysParamByTypeAndCode("menu", "out_menu");
-        if (!CollectionUtils.isEmpty(sysPramPos)) {
-            for (SysPramPo item : sysPramPos) {
-                outMenuSb.append(item.getParamVal() + ";");
-            }
-        } else {
-            outMenuSb.append("系统日志");
-        }
-        //针对菜单进行处理，先使用一个默认菜单
-        roleDTO.setMenuIds(outMenuSb.toString());
-        //没的默认菜单
-        /*if(StringUtils.isNotEmpty(user.getUserType())) {
-            roleDTO.setMenuIds(UserConst.REG_DEFAULT_MENU);
-        }
-        for (DeviceTypeEnum deviceTypeEnum : DeviceTypeEnum.values()) {
-            if (deviceTypeEnum.ordinal() == ConvertUtils.toInt(user.getUserType()) && user.getUserType()!=null) {
-                String menus=UserConst.REG_DEFAULT_MENU+","+menuService.findExistMenusIds(deviceTypeEnum.getNameById(deviceTypeEnum.ordinal()) );
-                roleDTO.setMenuIds(menus);
-            }
-        }*/
-        //处理关系
-        List<Integer> roleDTOS = user.getRoleIds();
-        if (roleDTOS != null) {
-            roleDTOS.add(roleDTO.getRoleId());
-        } else {
-            roleDTOS = new ArrayList<>();
-        }
-        List<RoleDTO> roles = roleDao.findByUserid(user.getUserId());
-        if (CollectionUtils.isEmpty(roles)) {
-            roleDao.addRole(roleDTO);
-            roleDTOS = new ArrayList<>();
-            roleDTOS.add(roleDTO.getRoleId());
-        } else {
-            //更新
-            for (RoleDTO roleDTO1 : roles) {
-                roleDTOS.add(roleDTO1.getRoleId());
-                RoleQuery roleQuery = new RoleQuery();
-                roleQuery.createCriteria().andIdEqualTo(roleDTO1.getRoleId());
-                roleDTO1.setmId(user.getMId());
-                roleDao.updateByExampleSelective(roleDTO1, roleQuery);
-            }
+        String sql="SELECT  * FROM user_role u  WHERE u.user_id="+user.getUserId() ;
+        Map<String, Object> roleUserMap = SqlRunner.db().selectOne(sql);
+        //应急人员
+        if (roleUserMap != null && roleUserMap.get("role_id") != null  ) {
+            String updateSql="update user_role u set u.role_id="+user.getRoleIds().get(0)+" WHERE u.user_id="+user.getUserId() ;
+            boolean exec = SqlRunner.db().update(updateSql);
+        }else{
+            UserRole userRole=new UserRole();
+            userRole.setRoleId(user.getRoleIds().get(0));
+            userRole.setUserId(user.getUserId());
+            userRoleDao.addUserRole(userRole);
         }
 
-        //清除所有关系
-        delUserRole(user);
-        //添加角色
-        for (Integer roleId : roleDTOS) {
-            UserRole userRole = new UserRole();
-            userRole.setUserId(user.getUserId());
-            if (roleId == null) {
-                continue;
-            }
-            userRole.setRoleId(roleId);
-            int count = userRoleDao.addUserRole(userRole);
-            if (count == 0) {
-                return "没有添加上角色关系";
-            }
-        }
         return "";
     }
 
@@ -574,12 +518,6 @@ public class UserServiceImpl implements IUserService {
         UserQuery userQuery = new UserQuery();
         if (null != ids && ids.size() > 0) {
             userQuery.createCriteria().andIdIn(ids);
-            for (Integer id : ids) {
-                User user = userDao.selectByuserId(id);
-                MerchantQuery merchantQuery = new MerchantQuery();
-                merchantQuery.createCriteria().andIdEqualTo(user.getMId());
-                merchantDao.deleteByExample(merchantQuery);
-            }
             //清除角色關系
             UserRoleQuery userRoleQuery = new UserRoleQuery();
             userRoleQuery.createCriteria().andUserIdIn(ids);

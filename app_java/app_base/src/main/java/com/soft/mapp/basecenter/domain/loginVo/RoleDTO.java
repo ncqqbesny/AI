@@ -33,6 +33,9 @@ public class RoleDTO {
     /**
      * 菜单ID
      */
+    @ApiModelProperty(value = "菜单id集")
+    @CustomTag(desc = "菜单ids,打开菜单ids")
+
     private String menuIds;
 
     public Integer getRoleId() {

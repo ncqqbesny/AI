@@ -47,7 +47,7 @@ public class Knife4jConfig {
                 //是否启动swagger 默认启动
                 .enable(flag)
                 //所在分组
-                .groupName("应急仓程序基础管理接口")
+                .groupName("app用管理基础接口")
                 .select()
                 //指定扫描的包路径
                 .apis(Predicates.or(
@@ -64,7 +64,7 @@ public class Knife4jConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .description("应急仓程序基础管理接口文档")
+                .description("app用户管理基础接口文档")
                 .contact(new Contact("yzg", "https://github.com.clm", "258481720@qq.com"))
                 .version("v1.1.0")
                 .title("HTTP API接口文档")

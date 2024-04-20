@@ -90,11 +90,48 @@ public class MerchantServiceImpl implements IMerchantService {
     private CommonPage<MerchantVo> getInfoBySelect(MerchantVo merchantVo,Integer pageSize, Integer pageNum){
         MerchantQuery merchantQuery = new MerchantQuery();
         MerchantQuery.Criteria criteria = merchantQuery.createCriteria();
-        if(merchantVo.getMId()!=null && !CommonBusiness.isAdmin()){
+        List<MerchantVo> datas=new ArrayList<MerchantVo>();
+        Long total=0l;
+        if(merchantVo.getMId()!=null ){
             criteria.andParentEqualTo(merchantVo.getMId());
             MerchantQuery.Criteria criteria1 = merchantQuery.createCriteria();
             criteria1.andIdEqualTo(merchantVo.getMId());
             merchantQuery.or(criteria1);
+        }
+        //企业用户之间的绑定项目不能互相查看，可以看上下级项目，政府人员可以查看企业用户所有项目
+        if(StringUtils.isNotEmpty(merchantVo.getUserId())){
+            String sql1 = "select m_id from user" + " where user_id=" + merchantVo.getUserId();
+            Map<String, Object> map = SqlRunner.db().selectOne(sql1);
+            //应急人员
+            String sql="SELECT  * FROM user_role u , role_permission t WHERE u.user_id="+merchantVo.getUserId()
+                    +" AND u.role_id=t.role_id AND  exists(SELECT 1 FROM permission p WHERE t.permission_id=p.permission_id AND p.permission='self_display')";
+            Map<String, Object> yjManMap = SqlRunner.db().selectOne(sql);
+            //应急人员
+            if (map != null && map.get("m_id") != null && null!=yjManMap && yjManMap.get("role_id")!=null ) {
+                criteria.andIdEqualTo(ConvertUtils.toInt(map.get("m_id")));
+            }
+            //企业人员可看上下级项目
+            //应急人员
+            String sql2="SELECT  * FROM user_role u , role_permission t WHERE u.user_id="+merchantVo.getUserId()
+                    +" AND u.role_id=t.role_id AND  exists(SELECT 1 FROM permission p WHERE t.permission_id=p.permission_id AND p.permission='up_down_display')";
+            Map<String, Object> upDownManMap = SqlRunner.db().selectOne(sql2);
+            if (map != null && map.get("m_id") != null && null!=upDownManMap && upDownManMap.get("role_id")!=null ) {
+                criteria.andParentEqualTo(ConvertUtils.toInt(map.get("m_id")));
+                MerchantQuery.Criteria criteria1 = merchantQuery.createCriteria();
+                criteria1.andIdEqualTo(ConvertUtils.toInt(map.get("m_id")));
+                merchantQuery.or(criteria1);
+            }
+            //管理员，政府人员 不用管理，没有角色的也不用管理
+            String sql3="SELECT r.role_id,u.username FROM user u ,user_role r WHERE u.user_id="+merchantVo.getUserId()
+                    +" AND r.user_id=u.user_id";
+            Map<String, Object> noRoleManMap = SqlRunner.db().selectOne(sql3);
+            String sql4="SELECT u.username FROM user u  WHERE u.user_id="+merchantVo.getUserId();
+            Map<String, Object> userManMap = SqlRunner.db().selectOne(sql4);
+            if ( null==noRoleManMap && !userManMap.get("username").toString().equalsIgnoreCase("admin") ) {
+                pageNum=1;
+                pageSize=1;
+                return  CommonPage.restPage(datas, pageNum, pageSize, total);
+            }
         }
         if(StringUtils.isNotEmpty(merchantVo.getMName())){
             criteria.andmNameLike(merchantVo.getMName());
@@ -125,7 +162,9 @@ public class MerchantServiceImpl implements IMerchantService {
             Integer parentMid=getParentMidsByUserId(merchantVo.getUserId());
             //admin mid=null 查看所有
             if(parentMid!=null) {
-                criteria.andIsChildren(parentMid);
+                MerchantQuery.Criteria criteria1 = merchantQuery.createCriteria();
+                criteria1.andIsChildren(parentMid);
+                merchantQuery.or(criteria1);
             }
         }
         merchantQuery.setOrderByClause("create_time desc,m_id asc");
@@ -136,8 +175,8 @@ public class MerchantServiceImpl implements IMerchantService {
         }
         List<?> listAndTotal=merchantDao.getPageMerchant(merchantQuery);
         List<MerchantPo> list=(List<MerchantPo>)listAndTotal.get(0);
-        Long total=((List<Long>) listAndTotal.get(1)).get(0);
-        List<MerchantVo> datas=new ArrayList<MerchantVo>();
+        total=((List<Long>) listAndTotal.get(1)).get(0);
+
         if(null!=list){
             for(MerchantPo item:list){
                 MerchantVo merchant=new MerchantVo();

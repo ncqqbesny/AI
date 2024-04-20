@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.ISysTokenDao" >
-  <resultMap id="BaseResultMap" type="com.hdpt.device.domain.loginVo.SysToken" >
+<mapper namespace="com.app.device.dao.ISysTokenDao" >
+  <resultMap id="BaseResultMap" type="com.app.device.domain.loginVo.SysToken" >
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="token" property="token" jdbcType="VARCHAR" />
     <result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
@@ -16,13 +16,13 @@
     from sys_token
     where user_id = #{userId,jdbcType=INTEGER }
   </select>
-  <insert id="insert" parameterType="com.hdpt.device.domain.loginVo.SysToken">
+  <insert id="insert" parameterType="com.app.device.domain.loginVo.SysToken">
     insert into sys_token (user_id, token, expire_time,
     update_time)
     values (#{userId,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR}, #{expireTime,jdbcType=TIMESTAMP},
     #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByUserId" parameterType="com.hdpt.device.domain.loginVo.SysToken">
+  <update id="updateByUserId" parameterType="com.app.device.domain.loginVo.SysToken">
     update sys_token
     <set>
       <if test="token != null">

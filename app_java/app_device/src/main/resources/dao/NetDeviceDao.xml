@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.INetDeviceDao">
-    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.hdUp.NetDeviceDTO">
+<mapper namespace="com.app.device.dao.INetDeviceDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.hdUp.NetDeviceDTO">
         <result column="id" property="id" jdbcType="INTEGER"/>
         <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
         <result column="m_id" property="mId" jdbcType="INTEGER"/>
@@ -142,7 +142,7 @@
     <select id="mySelect" resultType="map" parameterType="java.lang.String" >
         ${_parameter}
     </select>
-    <select id="getPageByExample" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery"
+    <select id="getPageByExample" parameterType="com.app.device.domain.hdUp.NetDeviceQuery"
             resultMap="BaseResultMap,count">
         select
         <if test="distinct">
@@ -165,7 +165,7 @@
             <include refid="Example_Where_Clause"/>
         </if>;
     </select>
-    <insert id="addInfo" parameterType="com.hdpt.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
+    <insert id="addInfo" parameterType="com.app.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
             useGeneratedKeys="true">
         <selectKey keyProperty="id" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('netDeviceSeq') AS id;
@@ -383,7 +383,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery">
+    <delete id="deleteByExample" parameterType="com.app.device.domain.hdUp.NetDeviceQuery">
         delete from net_device
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -434,7 +434,7 @@
         FROM net_device
         GROUP BY  m_id,if(`device_type` IS NULL OR `device_type`='','0',`device_type`)
     </select>
-    <select id="findList" resultMap="BaseResultMap" parameterType="com.hdpt.device.domain.hdUp.NetDeviceQuery">
+    <select id="findList" resultMap="BaseResultMap" parameterType="com.app.device.domain.hdUp.NetDeviceQuery">
         select
         <include refid="Base_Column_List"/>
         ,
@@ -447,7 +447,7 @@
             order by ${orderByClause}
         </if>
     </select>
-    <insert id="insertOrUpdate" parameterType="com.hdpt.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
+    <insert id="insertOrUpdate" parameterType="com.app.device.domain.hdUp.NetDeviceDTO" keyProperty="id"
             useGeneratedKeys="true">
         <selectKey keyProperty="id" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('netDeviceSeq') AS id;

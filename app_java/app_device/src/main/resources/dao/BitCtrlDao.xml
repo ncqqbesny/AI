@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.device.dao.IBitCtrlDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.BitCtrl.BitCtrlDTO">
+        <result column="id" property="ctrlId" jdbcType="INTEGER"/>
+        <result column="ctrl_no" property="ctrlNo" jdbcType="VARCHAR"/>
+        <result column="device_sn" property="deviceSn" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="cabinet_no" property="cabinetNo" jdbcType="VARCHAR"/>
+        <result column="station_no" property="stationNo" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="ctrl_mode" property="ctrlMode" jdbcType="INTEGER"/>
+        <result column="address_type" property="addressType" jdbcType="INTEGER"/>
+        <result column="address" property="address" jdbcType="INTEGER"/>
+        <result column="analog_num" property="analogNum" jdbcType="VARCHAR"/>
+        <result column="type_desc" property="typeDesc" jdbcType="VARCHAR"/>
+        <result column="ctrl_type" property="ctrlType" jdbcType="INTEGER"/>
+        <result column="ctrl_num" property="ctrlNum" jdbcType="INTEGER"/>
+        <result column="signaling_bit" property="signalingBit" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="port" property="port" jdbcType="VARCHAR"/>
+        <result column="request_flag" property="requestFlag" jdbcType="INTEGER"/>
+        <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <!-- 用来记录分页查询时的所有数据量，避免出现分页查询时需要查询两次 -->
+    <resultMap type="java.lang.Long" id="bitCtrlCount">
+        <result column="total"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.noInfo">
+                                    ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id
+        , device_sn,ctrl_no, `status`, `type`, ctrl_mode, address_type, address, type_desc, ctrl_type, ctrl_num,cabinet_no, station_no, signaling_bit,analog_num
+    </sql>
+    <sql id="Expend_Column_List">
+        remark,port,request_flag,request_no
+        , create_time, update_time
+    </sql>
+    <sql id="All_Column_List">
+        id,port,request_flag,request_no
+        , device_sn,ctrl_no, `status`, `type`, ctrl_mode, address_type, address, type_desc, ctrl_type, ctrl_num, signaling_bit, remark, create_time,cabinet_no, station_no,analog_num, update_time
+    </sql>
+    <select id="getPageByExample" parameterType="com.app.device.domain.BitCtrl.BitCtrlQuery"
+            resultMap="BaseResultMap,bitCtrlCount">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Expend_Column_List"/>
+        from bit_ctrl
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="pageNumAndSize != null">
+            LIMIT ${pageNumAndSize}
+        </if>
+        ;
+        SELECT count(1) AS total from bit_ctrl
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        ;
+    </select>
+    <insert id="addInfo" parameterType="com.app.device.domain.BitCtrl.BitCtrlDTO" keyProperty="ctrlId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="ctrlId" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('ctrlSeq') AS ctrlId;
+        </selectKey>
+        insert into bit_ctrl ( id, ctrl_no, `status`, `type`, ctrl_mode,
+        address_type, address, type_desc, ctrl_type, ctrl_num,
+        signaling_bit, remark,cabinet_no, station_no, create_time,
+                              device_sn)
+        values (#{ctrlId,jdbcType=INTEGER}, #{ctrlNo,jdbcType=VARCHAR},
+        #{status,jdbcType=INTEGER},#{type,jdbcType=INTEGER},#{ctrlMode,jdbcType=INTEGER},
+        #{addressType,jdbcType=INTEGER},#{address,jdbcType=INTEGER},#{typeDesc,jdbcType=VARCHAR},#{ctrlType,jdbcType=INTEGER},#{ctrlNum,jdbcType=INTEGER}
+        ,#{signalingBit,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},
+        #{cabinetNo,jdbcType=VARCHAR},#{stationNo,jdbcType=VARCHAR},NOW(),
+        #{deviceSn,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateByExampleSelective" parameterType="map">
+        update bit_ctrl
+        <set>
+            <if test="record != null and record.deviceSn != null">
+                device_sn = #{record.deviceSn,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.ctrlNo != null">
+                ctrl_no = #{record.ctrlNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.type != null">
+                `type` = #{record.type,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.ctrlMode != null">
+                ctrl_mode = #{record.ctrlMode,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.addressType != null">
+                address_type = #{record.addressType,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.address != null">
+                address = #{record.address,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.typeDesc != null">
+                type_desc = #{record.typeDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.ctrlType != null">
+                ctrl_type = #{record.ctrlType,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.ctrlNum != null">
+                ctrl_num = #{record.ctrlNum,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.signalingBit != null">
+                signaling_bit = #{record.signalingBit,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.analogNum != null">
+                analog_num = #{record.analogNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.cabinetNo != null">
+                cabinet_no = #{record.cabinetNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.stationNo != null">
+                station_no = #{record.stationNo,jdbcType=VARCHAR},
+            </if>
+            <if test="record != null and record.requestFlag != null">
+                request_flag = #{record.requestFlag,jdbcType=INTEGER},
+            </if>
+            <if test="record != null and record.requestNo != null">
+                request_no = #{record.requestNo,jdbcType=VARCHAR},
+            </if>
+              update_time =NOW(),
+
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateBatch" parameterType="java.util.List" >
+        update bit_ctrl
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="request_flag =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.requestFlag!=null">
+                        when cabinet_no=#{i.cabinetNo} and station_no=#{i.stationNo} and address=#{i.address} and ctrl_type=#{i.ctrlType} and ctrl_num=#{i.ctrlNum} then #{i.requestFlag}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="request_no =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.requestNo!=null">
+                        when cabinet_no=#{i.cabinetNo} and station_no=#{i.stationNo} and address=#{i.address} and ctrl_type=#{i.ctrlType} and ctrl_num=#{i.ctrlNum} then #{i.requestNo}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="type =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.type!=null">
+                        when cabinet_no=#{i.cabinetNo} and station_no=#{i.stationNo} and address=#{i.address} and ctrl_type=#{i.ctrlType} and ctrl_num=#{i.ctrlNum}  then #{i.type}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="update_time =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                        when cabinet_no=#{i.cabinetNo} and station_no=#{i.stationNo} and address=#{i.address} and ctrl_type=#{i.ctrlType} and ctrl_num=#{i.ctrlNum}  then NOW()
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="i" index="index" >
+            cabinet_no=#{i.cabinetNo} and station_no=#{i.stationNo} and address=#{i.address} and ctrl_type=#{i.ctrlType} and ctrl_num=#{i.ctrlNum}
+        </foreach>
+    </update>
+    <delete id="deleteByExample" parameterType="com.app.device.domain.BitCtrl.BitCtrlQuery">
+        delete from bit_ctrl
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <select id="selectByCtrlId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="All_Column_List"/>
+        from bit_ctrl
+        where id = #{ctrlId,jdbcType=INTEGER }
+    </select>
+    <select id="findByCtrlNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from bit_ctrl
+        where ctrl_no = #{ctrlNo,jdbcType=VARCHAR }
+    </select>
+    <select id="findListByWhere" resultMap="BaseResultMap"
+            parameterType="com.app.device.domain.BitCtrl.BitCtrlQuery">
+        select
+        <include refid="All_Column_List"/>
+        from bit_ctrl
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        ;
+    </select>
+    <insert id="insertOrUpdate" parameterType="com.app.device.domain.BitCtrl.BitCtrlDTO" keyProperty="ctrlId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="ctrlId" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('ctrlSeq') AS ctrlId;
+        </selectKey>
+        insert into bit_ctrl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="deviceSn != null">
+                device_sn ,
+            </if>
+            <if test="ctrlNo != null">
+                ctrl_no ,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="cabinetNo != null">
+                cabinet_no,
+            </if>
+            <if test="stationNo != null">
+                station_no,
+            </if>
+            <if test="type != null">
+                `type` ,
+            </if>
+            <if test="ctrlMode != null">
+                ctrl_mode ,
+            </if>
+            <if test="addressType != null">
+                address_type ,
+            </if>
+            <if test="address != null">
+                address ,
+            </if>
+            <if test="typeDesc != null">
+                type_desc ,
+            </if>
+            <if test="ctrlType != null">
+                ctrl_type ,
+            </if>
+            <if test="ctrlNum != null">
+                ctrl_num ,
+            </if>
+            <if test="signalingBit != null">
+                signaling_bit,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="updateTime != null">
+                update_time ,
+            </if>
+            <if test="port != null">
+                port ,
+            </if>
+            <if test="analogNum != null">
+                analog_num ,
+            </if>
+            <if test="requestFlag != null">
+                request_flag,
+            </if>
+            <if test="requestNo != null">
+                request_no ,
+            </if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{ctrlId,jdbcType=INTEGER},
+            <if test="deviceSn != null">
+                #{deviceSn,jdbcType=VARCHAR},
+            </if>
+            <if test="ctrlNo != null">
+                #{ctrlNo,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="cabinetNo != null">
+                #{cabinetNo,jdbcType=VARCHAR},
+            </if>
+            <if test="stationNo != null">
+                #{stationNo,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="ctrlMode != null">
+                #{ctrlMode,jdbcType=INTEGER},
+            </if>
+            <if test="addressType != null">
+                #{addressType,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=INTEGER},
+            </if>
+            <if test="typeDesc != null">
+                #{typeDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="ctrlType != null">
+                #{ctrlType,jdbcType=INTEGER},
+            </if>
+            <if test="ctrlNum != null">
+                #{ctrlNum,jdbcType=INTEGER},
+            </if>
+            <if test="signalingBit != null">
+                #{signalingBit,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="port != null">
+                #{port,jdbcType=VARCHAR},
+            </if>
+            <if test="analogNum != null">
+                #{analogNum,jdbcType=VARCHAR},
+            </if>
+            <if test="requestFlag != null">
+                #{requestFlag,jdbcType=INTEGER},
+            </if>
+            <if test="requestNo != null">
+                #{requestNo,jdbcType=VARCHAR},
+            </if>
+            NOW(),
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        update_time=NOW()
+        <if test="deviceSn != null">
+            ,device_sn = #{deviceSn,jdbcType=VARCHAR}
+        </if>
+        <if test="ctrlNo != null">
+            ,ctrl_no = #{ctrlNo,jdbcType=VARCHAR}
+        </if>
+        <if test="status != null">
+            ,status = #{status,jdbcType=INTEGER}
+        </if>
+        <if test="type != null">
+            ,`type` = #{type,jdbcType=INTEGER}
+        </if>
+        <if test="ctrlMode != null">
+            ,ctrl_mode = #{ctrlMode,jdbcType=INTEGER}
+        </if>
+        <if test="addressType != null">
+            ,address_type = #{addressType,jdbcType=INTEGER}
+        </if>
+        <if test="address != null">
+            ,address = #{address,jdbcType=INTEGER}
+        </if>
+        <if test="typeDesc != null">
+            ,type_desc = #{typeDesc,jdbcType=VARCHAR}
+        </if>
+        <if test="ctrlType != null">
+            ,ctrl_type = #{ctrlType,jdbcType=INTEGER}
+        </if>
+        <if test="ctrlNum != null">
+            ,ctrl_num = #{ctrlNum,jdbcType=INTEGER}
+        </if>
+        <if test="signalingBit != null">
+            ,signaling_bit = #{signalingBit,jdbcType=VARCHAR}
+        </if>
+        <if test="remark != null">
+            ,remark = #{remark,jdbcType=VARCHAR}
+        </if>
+        <if test="cabinetNo != null">
+            ,cabinet_no = #{cabinetNo,jdbcType=VARCHAR}
+        </if>
+        <if test="stationNo != null">
+            ,station_no = #{stationNo,jdbcType=VARCHAR}
+        </if>
+        <if test="port != null">
+            ,port=#{port,jdbcType=VARCHAR}
+        </if>
+        <if test="analogNum != null">
+           ,analog_num=#{analogNum,jdbcType=VARCHAR}
+        </if>
+        <if test="requestFlag != null">
+            ,request_flag = #{requestFlag,jdbcType=INTEGER}
+        </if>
+        <if test="requestNo != null">
+            ,request_no = #{requestNo,jdbcType=VARCHAR}
+        </if>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" parameterType="com.app.device.domain.BitCtrl.BitCtrlDTO"
+            keyProperty="ctrlId"
+            useGeneratedKeys="true">
+        <selectKey keyProperty="ctrlId" keyColumn="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT NEXTVAL('ctrlSeq') AS ctrlId;
+        </selectKey>
+        insert into bit_ctrl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="deviceSn != null">
+                device_sn ,
+            </if>
+            <if test="ctrlNo != null">
+                ctrl_no ,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="type != null">
+                `type` ,
+            </if>
+            <if test="ctrlMode != null">
+                ctrl_mode ,
+            </if>
+            <if test="addressType != null">
+                address_type ,
+            </if>
+            <if test="address != null">
+                address ,
+            </if>
+            <if test="typeDesc != null">
+                type_desc ,
+            </if>
+            <if test="ctrlType != null">
+                ctrl_type ,
+            </if>
+            <if test="ctrlNum != null">
+                ctrl_num ,
+            </if>
+            <if test="signalingBit != null">
+                signaling_bit,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="updateTime != null">
+                update_time ,
+            </if>
+            create_time,
+        </trim>
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                #{ctrlId,jdbcType=INTEGER},
+                <if test="item.deviceSn != null">
+                    #{item.deviceSn,jdbcType=VARCHAR},
+                </if>
+                <if test="item.ctrlNo != null">
+                    #{item.ctrlNo,jdbcType=VARCHAR},
+                </if>
+                <if test="item.status != null">
+                    #{item.status,jdbcType=INTEGER},
+                </if>
+                <if test="item.type != null">
+                    #{item.type,jdbcType=INTEGER},
+                </if>
+                <if test="item.ctrlMode != null">
+                    #{item.ctrlMode,jdbcType=INTEGER},
+                </if>
+                <if test="item.addressType != null">
+                    #{item.addressType,jdbcType=INTEGER},
+                </if>
+                <if test="item.address != null">
+                    #{item.address,jdbcType=INTEGER},
+                </if>
+                <if test="item.typeDesc != null">
+                    #{item.typeDesc,jdbcType=VARCHAR},
+                </if>
+                <if test="item.ctrlType != null">
+                    #{item.ctrlType,jdbcType=INTEGER},
+                </if>
+                <if test="item.ctrlNum != null">
+                    #{item.ctrlNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.signalingBit != null">
+                    #{item.signalingBit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.remark != null">
+                    #{item.remark,jdbcType=VARCHAR},
+                </if>
+                <if test="item.updateTime != null">
+                    #{item.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                NOW(),
+            </trim>
+            ON DUPLICATE KEY UPDATE
+            update_time=NOW()
+            <if test="item.deviceSn != null">
+                ,device_sn = #{item.deviceSn,jdbcType=VARCHAR}
+            </if>
+            <if test="item.ctrlNo != null">
+                ,ctrl_no = #{item.ctrlNo,jdbcType=VARCHAR}
+            </if>
+            <if test="item.status != null">
+                ,status = #{item.status,jdbcType=INTEGER}
+            </if>
+            <if test="item.type != null">
+                ,`type` = #{item.type,jdbcType=INTEGER}
+            </if>
+            <if test="item.ctrlMode != null">
+                ,ctrl_mode = #{item.ctrlMode,jdbcType=INTEGER}
+            </if>
+            <if test="item.addressType != null">
+                ,address_type = #{item.addressType,jdbcType=INTEGER}
+            </if>
+            <if test="item.address != null">
+                ,address = #{item.address,jdbcType=INTEGER}
+            </if>
+            <if test="item.typeDesc != null">
+                ,type_desc = #{item.typeDesc,jdbcType=VARCHAR}
+            </if>
+            <if test="item.ctrlType != null">
+                ,ctrl_type = #{item.ctrlType,jdbcType=INTEGER}
+            </if>
+            <if test="item.ctrlNum != null">
+                ,ctrl_num = #{item.ctrlNum,jdbcType=INTEGER}
+            </if>
+            <if test="item.signalingBit != null">
+                ,signaling_bit = #{item.signalingBit,jdbcType=VARCHAR}
+            </if>
+            <if test="item.remark != null">
+                ,remark = #{item.remark,jdbcType=VARCHAR}
+            </if>
+            <if test="cabinetNo != null">
+                ,cabinet_no = #{cabinetNo,jdbcType=VARCHAR}
+            </if>
+            <if test="stationNo != null">
+                ,station_no = #{stationNo,jdbcType=VARCHAR}
+            </if>
+        </foreach>
+    </insert>
+
+</mapper>

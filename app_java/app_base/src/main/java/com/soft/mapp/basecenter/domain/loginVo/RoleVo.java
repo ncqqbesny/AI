@@ -11,13 +11,13 @@ public class RoleVo  extends RoleDTO{
     @ApiModelProperty(value = "菜单 （添加编辑不用）")
     @CustomTag(desc = "菜单")
     private  List<Menu> menus;
-    @ApiModelProperty(value = "菜单名字 （添加编辑不用）")
+    @ApiModelProperty(value = "菜单名字 （添加编辑不用）",hidden = true)
     @CustomTag(desc = "菜单名字")
     private String menuName ;
-    @ApiModelProperty(value = "路径名（添加编辑不用）")
+    @ApiModelProperty(value = "路径名（添加编辑不用）",hidden = true)
     @CustomTag(desc = "路径名")
     private String staticRouter;
-    @ApiModelProperty(value = "查询多项目")
+    @ApiModelProperty(value = "查询多项目",hidden = true)
     @CustomTag(desc = "查询多项目")
     private List<Integer> mIds;
 

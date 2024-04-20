@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hdpt.device.dao.ISysLogDao">
-    <resultMap id="BaseResultMap" type="com.hdpt.device.domain.SysLog.SysLogPo">
+<mapper namespace="com.app.device.dao.ISysLogDao">
+    <resultMap id="BaseResultMap" type="com.app.device.domain.SysLog.SysLogPo">
         <result column="log_id" property="logId" jdbcType="INTEGER"/>
         <result column="m_id" property="mId" jdbcType="INTEGER"/>
         <result column="module" property="module" jdbcType="VARCHAR"/>
@@ -95,7 +95,7 @@
     <sql id="All_Column_List">
         log_id, m_id, module, `type`, log_type, msg,user_id, user_name,ip, url, method, param, return_value, create_time, update_time
     </sql>
-    <select id="getPageSysLog" parameterType="com.hdpt.device.domain.SysLog.SysLogQuery"
+    <select id="getPageSysLog" parameterType="com.app.device.domain.SysLog.SysLogQuery"
             resultMap="BaseResultMap,logCount">
         select
         <if test="distinct">
@@ -120,7 +120,7 @@
             <include refid="Example_Where_Clause"/>
         </if>;
     </select>
-    <insert id="addInfo" parameterType="com.hdpt.device.domain.SysLog.SysLogPo" keyProperty="logId"
+    <insert id="addInfo" parameterType="com.app.device.domain.SysLog.SysLogPo" keyProperty="logId"
             useGeneratedKeys="true">
         <selectKey keyProperty="logId" keyColumn="user_id" order="BEFORE" resultType="java.lang.Integer">
             SELECT NEXTVAL('logSeq') AS logId;
@@ -154,7 +154,7 @@
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <delete id="deleteByExample" parameterType="com.hdpt.device.domain.SysLog.SysLogQuery">
+    <delete id="deleteByExample" parameterType="com.app.device.domain.SysLog.SysLogQuery">
         delete from sys_log
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -179,7 +179,7 @@
         from sys_log
         where user_name = #{userName,jdbcType=VARCHAR }
     </select>
-    <select id="findList"  parameterType="com.hdpt.device.domain.SysLog.SysLogQuery"
+    <select id="findList"  parameterType="com.app.device.domain.SysLog.SysLogQuery"
             resultMap="BaseResultMap">
         select
         <include refid="All_Column_List"/>

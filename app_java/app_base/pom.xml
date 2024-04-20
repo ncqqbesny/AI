@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.clmsoft.mapp</groupId>
-	<artifactId>hdpt_base</artifactId>
+	<artifactId>app_base</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>hdpt_base</name>
-	<description>hdpt_base project for Spring Boot</description>
+	<name>app_base</name>
+	<description>app_base project for Spring Boot</description>
 	<properties>
 		<nacos-config-spring-boot.version>0.2.1</nacos-config-spring-boot.version>
 	</properties>
