@@ -121,6 +121,9 @@ public class DeviceServiceImpl implements IDeviceService {
         if (StringUtil.isNotEmpty(dataMap.get("deviceSn"))) {
             deviceDTO.setDeviceSn(dataMap.get("deviceSn"));
         }
+        if (StringUtil.isNotEmpty(dataMap.get("gatewaySn"))) {
+            deviceDTO.setGateway(dataMap.get("gatewaySn"));
+        }
         deviceDTO.setMid(mId);
         if (StringUtil.isNotEmpty(dataMap.get("keepalive"))) {
             deviceDTO.setInterval(dataMap.get("keepalive"));

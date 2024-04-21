@@ -11,6 +11,7 @@ public enum DeviceTypeEnum {
     terminal("终端",7),
     sfx("环测网关",8),
     yjc("应急仓",9),
+    wwj("娃娃机",10),
     ;
     // 成员变量
     private String name;

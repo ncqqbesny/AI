@@ -1,5 +1,6 @@
 package com.app.device.domain.Device;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,4 +19,6 @@ public class DeviceVo extends DeviceDTO {
     List<String> deviceTypeCodes;
     @ApiModelProperty(value = "是否job",hidden = true)
     boolean isJob;
+    @ApiModelProperty(value = "发送控制信息")
+    private String msg;
 }

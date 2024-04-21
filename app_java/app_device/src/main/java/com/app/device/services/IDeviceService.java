@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IDeviceService {
-
     List<Map> mySelect(String sql);
     public int selectColumn(String gid);
     //插入及更新
