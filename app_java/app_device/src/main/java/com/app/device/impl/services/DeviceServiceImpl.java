@@ -190,10 +190,12 @@ public class DeviceServiceImpl implements IDeviceService {
         if (StringUtil.isNotEmpty(dataMap.get("outTime"))) {
             deviceDTO.setOutTime(DateUtils.getDateByString(dataMap.get("outTime"), DateUtils.DATE_FORMAT));
         }
+        if (StringUtil.isNotEmpty(dataMap.get("ip"))) {
+            deviceDTO.setIp(dataMap.get("ip"));
+        }
         if (StringUtil.isNotEmpty(dataMap.get("bindTime"))) {
             deviceDTO.setBindTime(DateUtils.getDateByString(dataMap.get("bindTime"), DateUtils.DATE_FORMAT));
         }
-
         deviceDTO.setUpJson(dataMap.get("upJson"));
         int count = 0;
         QueryWrapper<DeviceDTO> queryWrapper = new QueryWrapper<>();
