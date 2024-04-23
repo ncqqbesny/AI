@@ -1,5 +1,6 @@
 package com.app.device.utils;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
@@ -11,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.comparators.ComparableComparator;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -20,6 +22,44 @@ import java.util.stream.Collectors;
 
 
 public class ListUtils {
+
+    /**
+     * 对象复制
+     * @param sCollection
+     * @param tCollection
+     * @param tClass
+     * @param <S>
+     * @param <T>
+     */
+    public static <S,T> void copyList(Collection<S> sCollection, Collection<T> tCollection, Class<T> tClass) {
+        if(sCollection==null||tCollection==null||sCollection.size()==0){
+            return;
+        }
+        try {
+            for(S s:sCollection){
+                T t = tClass.newInstance();
+                BeanUtils.copyProperties(s,t);
+                tCollection.add(t);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static <S,T> void copyIPage(IPage<S> siPage, IPage<T> tiPage, Class<T> tClass){
+        if(siPage==null||tiPage==null){
+            return;
+        }
+        tiPage.setCurrent(siPage.getCurrent());
+        tiPage.setPages(siPage.getPages());
+        tiPage.setSize(siPage.getSize());
+        tiPage.setTotal(siPage.getTotal());
+        List<S> sList= siPage.getRecords();
+        List<T> tList=new ArrayList<>();
+        copyList(sList,tList,tClass);
+        tiPage.setRecords(tList);
+    }
+
     /**
      * list 删除null
      *

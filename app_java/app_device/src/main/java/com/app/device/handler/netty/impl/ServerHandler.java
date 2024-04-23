@@ -1,7 +1,10 @@
 package com.app.device.handler.netty.impl;
 
+import com.app.device.domain.Wwj.DtuCmdDTO;
 import com.app.device.services.IDeviceService;
+import com.app.device.services.wwj.IHardwareWwjService;
 import com.app.device.type.DeviceTypeEnum;
+import com.app.device.type.DtuCmdStatusEnum;
 import com.app.device.utils.StringUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +32,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired
     IDeviceService deviceService;
+    @Autowired
+    IHardwareWwjService hardwareWwjService;
     //  将当前客户端连接 存入map   实现控制设备下发 参数
     public static Map<String, ChannelHandlerContext> map = new HashMap<String, ChannelHandlerContext>();
 
@@ -42,12 +48,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
         //msg为接收到的客户端传递的数据   个人这边直接传的json 数据
         ByteBuf readMessage = (ByteBuf) msg;
-        JSONObject json=new JSONObject();
-        if(StringUtil.isJSON(readMessage.toString(CharsetUtil.UTF_8))){
-             json = JSONObject.fromObject(readMessage.toString(CharsetUtil.UTF_8));
-        }
-        //解析客户端json 数据
         log.info("channelRead--接收到的数据" + readMessage.toString(CharsetUtil.UTF_8));
+        if(!StringUtil.isJSON(readMessage.toString(CharsetUtil.UTF_8))){
+            handleCallBackOrder(ctx,readMessage.toString(CharsetUtil.UTF_8));
+            return;
+        }
+        JSONObject json = JSONObject.fromObject(readMessage.toString(CharsetUtil.UTF_8));
+        //解析客户端json 数据
 
         //获取客户端的请求地址  取到的值为客户端的 ip+端口号
         String url = ctx.channel().remoteAddress().toString();//设备请求地址（个人将设备的请求地址当作 map 的key）
@@ -63,13 +70,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         //判断端口如果客户端请求的端口号为9898   就是写入第一张表   这样可以实现 设备传递数据参数不一致
         log.info("向：" + servicePort.substring(servicePort.length() - 4, servicePort.length()) + " 端口写入数据");
         if (servicePort.substring(servicePort.length() - 4, servicePort.length()).equals("9898")) {
-            if(null!=json && StringUtil.isNotEmpty(json.getString("imei"))) {
+
                 addDeviceData(json, url, servicePort, readMessage);
-            }
+
         } else {
-            if(null!=json && StringUtil.isNotEmpty(json.getString("imei"))) {
                 addDeviceData(json, url, servicePort, readMessage);
-            }
         }
         String rmsg;
         if (users > 0) {
@@ -84,6 +89,22 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         ctx.flush();
     }
 
+    /**
+     * 处理反馈命令信息
+     * @param
+     */
+    private void handleCallBackOrder(ChannelHandlerContext ctx,String readMessage){
+          DtuCmdDTO dtuCmdDto=new DtuCmdDTO();
+          dtuCmdDto.setRevCmd(readMessage);
+          dtuCmdDto.setRevUrl(ctx.channel().remoteAddress().toString());
+          dtuCmdDto.setRevTime(new Date());
+          dtuCmdDto.setLastTime(new Date());
+          dtuCmdDto.setStatus(DtuCmdStatusEnum.rev.ordinal());
+          String msg= hardwareWwjService.saveDtuCmd(dtuCmdDto);
+          if(StringUtil.isNotEmpty(msg)){
+              log.error("handleCallBackOrder--处理错误==="+msg);
+          }
+    }
     /**
      * 长连接写入数据库
      * @param json

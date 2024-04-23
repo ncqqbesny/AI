@@ -4,16 +4,23 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.app.device.controller.wwj.IEquipmentController;
 import com.app.device.domain.Device.DeviceDTO;
 import com.app.device.domain.Device.DeviceVo;
-import com.app.device.domain.Device.EquipmentDTO;
+import com.app.device.domain.Wwj.DtuCmdDTO;
+import com.app.device.domain.Wwj.DtuCmdVO;
+import com.app.device.domain.Wwj.EquipmentDTO;
+import com.app.device.domain.loginVo.User;
+import com.app.device.handler.UserInfoContext;
 import com.app.device.handler.netty.impl.ServerHandler;
 import com.app.device.services.IDeviceService;
+import com.app.device.services.wwj.IHardwareWwjService;
+import com.app.device.type.DtuCmdStatusEnum;
+import com.app.device.utils.ListUtils;
+import com.app.device.utils.OrderUtils;
 import com.app.device.utils.ServerResponse;
+import com.app.device.utils.StringUtil;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSort;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -21,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Context;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -29,16 +39,17 @@ import java.util.List;
 @ApiSort(value = 5)
 public class EquipmentController implements IEquipmentController {
     private final static Logger log = LoggerFactory.getLogger(EquipmentController.class);
-
     @Autowired
-    private IDeviceService deviceService;
+    IDeviceService deviceService;
+    @Autowired
+    IHardwareWwjService hardwareWwjService;
 
     @Override
     @ApiOperation(value = "控制设备", notes = "根据各种条件给设备发送指令 msg")
     @RequestMapping(value = "/equipment", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperationSupport(order = 3) //排序
-    public ServerResponse<?> equipment(@RequestBody  DeviceVo deviceVo) {
+    public ServerResponse<?> equipment(@RequestBody DeviceVo deviceVo) {
 
         //入参 设备id   根据设备id  查询设备最后一次录入数据时候的 ip地址  实现下发
         try {
@@ -76,7 +87,7 @@ public class EquipmentController implements IEquipmentController {
             if (null == equipmentDTO.getCount()) {
                 equipmentDTO.setCount(0);
             }
-            if (null == equipmentDTO.getWaitTime()){
+            if (null == equipmentDTO.getWaitTime()) {
                 equipmentDTO.setWaitTime(0);
             }
             DeviceVo deviceVo = new DeviceVo();
@@ -95,20 +106,32 @@ public class EquipmentController implements IEquipmentController {
 
                 List<DeviceDTO> data = (List<DeviceDTO>) list;
                 log.info("执行的设备数据===" + data + "控制信息" + openRelayStr);
-
-                    for (int i = 0; i < equipmentDTO.getCount(); i++) {
-                        //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
-                        log.info("执行的令===" + i + "--控制命令" + openRelayStr);
-                        ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(Unpooled.copiedBuffer(openRelayStr.getBytes()));
-                        log.info("等待1秒执行关闭继电器" + i );
-                        Thread.sleep(equipmentDTO.getWaitTime()*1000);
-                        log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
-                        ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(Unpooled.copiedBuffer(colseRelayStr.getBytes()));
-                        //ChannelFuture  cfu = ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(message);
-                        //if (cfu != null) {
-                            //cfu.sync();
-                        //}
+                int i = 0;
+                Date startCmdDate = new Date();
+                while (i < equipmentDTO.getCount()) {
+                    //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
+                    log.info("执行的令===" + i + "--控制命令" + openRelayStr);
+                    String msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器");
+                    log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
+                    if (StringUtil.isEmpty(msg)) {
+                        msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器");
                     }
+                    if (StringUtil.isEmpty(msg)) {
+                        i++;
+                    }
+                    if (System.currentTimeMillis() - startCmdDate.getTime() > 150000) {
+                        log.info("equipmentAddCount--加分超时" + 150000);
+                        List<DeviceVo> listVo = new ArrayList<>();
+                        ListUtils.copyList(data, listVo, DeviceVo.class);
+                        deviceService.updateByExampleSelective(listVo);
+                        break;
+                    }
+                    //ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(Unpooled.copiedBuffer(colseRelayStr.getBytes()));
+                    //ChannelFuture  cfu = ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(message);
+                    //if (cfu != null) {
+                    //cfu.sync();
+                    //}
+                }
                 return ServerResponse.createBySuccess();
             } else {
                 return ServerResponse.createByError();
@@ -117,4 +140,47 @@ public class EquipmentController implements IEquipmentController {
             return ServerResponse.createByErrorMessage("操作错误");
         }
     }
+
+    private String exeCmd(String url, String cmd, String cmdDesc) {
+        String msg = "";
+        ServerHandler.map.get(url).channel().writeAndFlush(Unpooled.copiedBuffer(cmd.getBytes()));
+        String cmdNo = OrderUtils.getOrderCode(null);
+        DtuCmdDTO dtuCmdDTO = new DtuCmdDTO();
+        dtuCmdDTO.setCmdNo(cmdNo);
+        User context = UserInfoContext.getUser();
+        dtuCmdDTO.setUserId(context.getUserId());
+        dtuCmdDTO.setSendCmd(cmd);
+        dtuCmdDTO.setSendTime(new Date());
+        dtuCmdDTO.setSendUrl(url);
+        dtuCmdDTO.setMId(context.getMId());
+        dtuCmdDTO.setCmdDesc(cmdDesc);
+        msg = hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+        if (StringUtil.isNotEmpty(msg)) {
+            return msg;
+        }
+        //一直查询，直到查到结果，查询找过3分钟，表示执行失败，更单据为失败
+        Date startDate = new Date();
+        while (true) {
+            List<DtuCmdVO> dtuCmdList = hardwareWwjService.getDtuCmdList(dtuCmdDTO);
+            if (CollectionUtil.isNotEmpty(dtuCmdList) && dtuCmdList.get(0).getRevUrl().contains("ok")) {
+                break;
+            }
+            if (CollectionUtil.isEmpty(dtuCmdList)) {
+                msg = "没有数据";
+                break;
+            }
+            //过时了
+            if (System.currentTimeMillis() - startDate.getTime() > 150000) {
+                msg = "超过时间了";
+                DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
+                dtuCmdDTO1.setCmdNo(cmdNo);
+                dtuCmdDTO1.setStatus(DtuCmdStatusEnum.bad.ordinal());
+                dtuCmdDTO1.setRemark(msg);
+                hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+            }
+
+        }
+        return msg;
+    }
+
 }
