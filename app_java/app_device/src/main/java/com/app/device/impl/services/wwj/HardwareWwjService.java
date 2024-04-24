@@ -161,7 +161,7 @@ public class HardwareWwjService implements IHardwareWwjService {
         //queryWrapper组装查询where条件
         LambdaQueryWrapper<DtuCmdPO> queryWrapper = new LambdaQueryWrapper<>();
         //针对回写命令。
-        if(DtuCmdStatusEnum.rev.ordinal()==dtuCmdDto.getStatus()){
+        if(null!= dtuCmdDto && DtuCmdStatusEnum.rev.ordinal()==dtuCmdDto.getStatus()){
             queryWrapper.isNotNull(DtuCmdPO::getSendCmd).eq(DtuCmdPO::getStatus, DtuCmdStatusEnum.send.ordinal())
             .eq(DtuCmdPO::getSendUrl, dtuCmdDto.getRevUrl());
         }

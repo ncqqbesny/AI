@@ -1,6 +1,8 @@
 package com.app.device.handler.netty.impl;
 
 import com.app.device.domain.Wwj.DtuCmdDTO;
+import com.app.device.domain.loginVo.User;
+import com.app.device.handler.UserInfoContext;
 import com.app.device.services.IDeviceService;
 import com.app.device.services.wwj.IHardwareWwjService;
 import com.app.device.type.DeviceTypeEnum;
@@ -99,6 +101,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
           dtuCmdDto.setRevUrl(ctx.channel().remoteAddress().toString());
           dtuCmdDto.setRevTime(new Date());
           dtuCmdDto.setLastTime(new Date());
+          User context = UserInfoContext.getUser();
+          if(null!=context) {
+              dtuCmdDto.setUserId(context.getUserId());
+              dtuCmdDto.setMId(context.getMId());
+          }
           dtuCmdDto.setStatus(DtuCmdStatusEnum.rev.ordinal());
           String msg= hardwareWwjService.saveDtuCmd(dtuCmdDto);
           if(StringUtil.isNotEmpty(msg)){
