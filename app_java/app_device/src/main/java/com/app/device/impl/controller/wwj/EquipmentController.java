@@ -118,6 +118,8 @@ public class EquipmentController implements IEquipmentController {
                     }
                     if (StringUtil.isEmpty(msg)) {
                         i++;
+                    }else{
+                        return ServerResponse.createByErrorMessage(msg);
                     }
                     if (System.currentTimeMillis() - startCmdDate.getTime() > 150000) {
                         log.info("equipmentAddCount--加分超时" + 150000);
@@ -148,11 +150,14 @@ public class EquipmentController implements IEquipmentController {
         DtuCmdDTO dtuCmdDTO = new DtuCmdDTO();
         dtuCmdDTO.setCmdNo(cmdNo);
         User context = UserInfoContext.getUser();
-        dtuCmdDTO.setUserId(context.getUserId());
+        if(null!=context) {
+            dtuCmdDTO.setUserId(context.getUserId());
+            dtuCmdDTO.setMId(context.getMId());
+        }
         dtuCmdDTO.setSendCmd(cmd);
         dtuCmdDTO.setSendTime(new Date());
         dtuCmdDTO.setSendUrl(url);
-        dtuCmdDTO.setMId(context.getMId());
+        dtuCmdDTO.setStatus(DtuCmdStatusEnum.send.ordinal());
         dtuCmdDTO.setCmdDesc(cmdDesc);
         msg = hardwareWwjService.saveDtuCmd(dtuCmdDTO);
         if (StringUtil.isNotEmpty(msg)) {
@@ -162,7 +167,12 @@ public class EquipmentController implements IEquipmentController {
         Date startDate = new Date();
         while (true) {
             List<DtuCmdVO> dtuCmdList = hardwareWwjService.getDtuCmdList(dtuCmdDTO);
-            if (CollectionUtil.isNotEmpty(dtuCmdList) && dtuCmdList.get(0).getRevUrl().contains("ok")) {
+            if (CollectionUtil.isNotEmpty(dtuCmdList) && null!=dtuCmdList.get(0).getRevUrl() && dtuCmdList.get(0).getRevUrl().contains("ok")) {
+                DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
+                dtuCmdDTO1.setCmdNo(cmdNo);
+                dtuCmdDTO1.setStatus(DtuCmdStatusEnum.ok.ordinal());
+                dtuCmdDTO1.setRemark("完成");
+                hardwareWwjService.saveDtuCmd(dtuCmdDTO);
                 break;
             }
             if (CollectionUtil.isEmpty(dtuCmdList)) {
@@ -170,13 +180,14 @@ public class EquipmentController implements IEquipmentController {
                 break;
             }
             //过时了
-            if (System.currentTimeMillis() - startDate.getTime() > 150000) {
+            if (System.currentTimeMillis() - startDate.getTime() > 3000) {
                 msg = "超过时间了";
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.bad.ordinal());
                 dtuCmdDTO1.setRemark(msg);
                 hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+                break;
             }
 
         }
