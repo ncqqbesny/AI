@@ -214,10 +214,10 @@
     <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-api:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-runtime:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-collectionschema:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.xuxueli:xxl-job-core:2.4.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.xuxueli:xxl-job-core:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.51.Final" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.groovy:groovy:4.0.10" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.groovy:groovy:4.0.21" level="project" />
     <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.mchange:mchange-commons-java:0.2.11" level="project" />
     <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz-jobs:2.3.0" level="project" />
