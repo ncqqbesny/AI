@@ -100,7 +100,7 @@ public class EquipmentController implements IEquipmentController {
                 //转码
                 //ByteBuf message = Unpooled.copiedBuffer(openRelayStr.getBytes());
                 //关闭继电器
-                String colseRelayStr = "config,doout,ok,1,1\r\n";
+                String colseRelayStr = "config,set,doout,1,0\n";
                 //转码
                 //ByteBuf colseMessage = Unpooled.copiedBuffer(colseRelayStr.getBytes());
 
@@ -111,18 +111,18 @@ public class EquipmentController implements IEquipmentController {
                 while (i < equipmentDTO.getCount()) {
                     //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
                     log.info("执行的令===" + i + "--控制命令" + openRelayStr);
-                    String msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器");
+                    String msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器",equipmentDTO.getWaitTime());
                     log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
                     if (StringUtil.isEmpty(msg)) {
-                        msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器");
+                        msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器",equipmentDTO.getWaitTime());
                     }
                     if (StringUtil.isEmpty(msg)) {
                         i++;
                     }else{
                         return ServerResponse.createByErrorMessage(msg);
                     }
-                    if (System.currentTimeMillis() - startCmdDate.getTime() > 150000) {
-                        log.info("equipmentAddCount--加分超时" + 150000);
+                    if (System.currentTimeMillis() - startCmdDate.getTime() > equipmentDTO.getWaitTime()*1000 ) {
+                        log.info("equipmentAddCount--加分超时" + equipmentDTO.getWaitTime()*1000);
                         List<DeviceVo> listVo = new ArrayList<>();
                         ListUtils.copyList(data, listVo, DeviceVo.class);
                         deviceService.updateByExampleSelective(listVo);
@@ -143,9 +143,8 @@ public class EquipmentController implements IEquipmentController {
         }
     }
 
-    private String exeCmd(String url, String cmd, String cmdDesc) {
+    private String exeCmd(String url, String cmd, String cmdDesc ,int waiteTime) {
         String msg = "";
-        ServerHandler.map.get(url).channel().writeAndFlush(Unpooled.copiedBuffer(cmd.getBytes()));
         String cmdNo = OrderUtils.getOrderCode(null);
         DtuCmdDTO dtuCmdDTO = new DtuCmdDTO();
         dtuCmdDTO.setCmdNo(cmdNo);
@@ -159,6 +158,14 @@ public class EquipmentController implements IEquipmentController {
         dtuCmdDTO.setSendUrl(url);
         dtuCmdDTO.setStatus(DtuCmdStatusEnum.send.ordinal());
         dtuCmdDTO.setCmdDesc(cmdDesc);
+        try {
+            ServerHandler.map.get(url).channel().writeAndFlush(Unpooled.copiedBuffer(cmd.getBytes()));
+        }catch (Exception e){
+            dtuCmdDTO.setStatus(DtuCmdStatusEnum.bad.ordinal());
+            dtuCmdDTO.setCmdDesc("长连接错误"+e.getMessage());
+            hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+            return "长连接错误";
+        }
         msg = hardwareWwjService.saveDtuCmd(dtuCmdDTO);
         if (StringUtil.isNotEmpty(msg)) {
             return msg;
@@ -167,12 +174,12 @@ public class EquipmentController implements IEquipmentController {
         Date startDate = new Date();
         while (true) {
             List<DtuCmdVO> dtuCmdList = hardwareWwjService.getDtuCmdList(dtuCmdDTO);
-            if (CollectionUtil.isNotEmpty(dtuCmdList) && null!=dtuCmdList.get(0).getRevUrl() && dtuCmdList.get(0).getRevUrl().contains("ok")) {
+            if (CollectionUtil.isNotEmpty(dtuCmdList) && null!=dtuCmdList.get(0).getRevCmd() && dtuCmdList.get(0).getRevCmd().contains("ok")) {
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.ok.ordinal());
                 dtuCmdDTO1.setRemark("完成");
-                hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+                hardwareWwjService.saveDtuCmd(dtuCmdDTO1);
                 break;
             }
             if (CollectionUtil.isEmpty(dtuCmdList)) {
@@ -180,13 +187,13 @@ public class EquipmentController implements IEquipmentController {
                 break;
             }
             //过时了
-            if (System.currentTimeMillis() - startDate.getTime() > 3000) {
+            if (System.currentTimeMillis() - startDate.getTime() > waiteTime*1000) {
                 msg = "超过时间了";
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.bad.ordinal());
                 dtuCmdDTO1.setRemark(msg);
-                hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+                hardwareWwjService.saveDtuCmd(dtuCmdDTO1);
                 break;
             }
 

@@ -169,7 +169,7 @@ public class HardwareWwjService implements IHardwareWwjService {
             queryWrapper.eq(DtuCmdPO::getCmdNo, dtuCmdDto.getCmdNo());
         }
         //gid集合
-        if (StringUtil.isNotEmpty(dtuCmdDto.getGid())) {
+        if (StringUtil.isNotEmpty(dtuCmdDto.getGid()) && null!= dtuCmdDto && DtuCmdStatusEnum.send.ordinal()!=dtuCmdDto.getStatus()) {
             queryWrapper.eq(DtuCmdPO::getGid, dtuCmdDto.getGid());
         }
         if (null!=dtuCmdDto.getMId()) {
@@ -178,7 +178,7 @@ public class HardwareWwjService implements IHardwareWwjService {
         if(StringUtil.isNotEmpty(dtuCmdDto.getSendUrl())){
             queryWrapper.eq(DtuCmdPO::getSendUrl, dtuCmdDto.getSendUrl());
         }
-        if (StringUtil.isNotEmpty(dtuCmdDto.getRevUrl())) {
+        if (StringUtil.isNotEmpty(dtuCmdDto.getRevUrl()) && DtuCmdStatusEnum.rev.ordinal()!=dtuCmdDto.getStatus()) {
             queryWrapper.eq(DtuCmdPO::getRevUrl, dtuCmdDto.getRevUrl());
         }
 
