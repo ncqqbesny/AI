@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@Api(tags = "设备操作接口")//描述UserController的信息
+@Api(tags = "通用设备操作接口")//描述UserController的信息
 @RequestMapping("/equipment")
 @ApiSort(value = 5)
 public class EquipmentController implements IEquipmentController {
@@ -77,7 +77,7 @@ public class EquipmentController implements IEquipmentController {
 
 
     @Override
-    @ApiOperation(value = "给设备加分", notes = "根设备编号进行加分，只针对银尔泰")
+    @ApiOperation(value = "给设备操作次数", notes = "根设备编号进行操作几次，只针对YRT")
     @RequestMapping(value = "/equipmentAddCount", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperationSupport(order = 3) //排序
@@ -103,23 +103,21 @@ public class EquipmentController implements IEquipmentController {
                 String colseRelayStr = "config,set,doout,1,0\n";
                 //转码
                 //ByteBuf colseMessage = Unpooled.copiedBuffer(colseRelayStr.getBytes());
-
                 List<DeviceDTO> data = (List<DeviceDTO>) list;
                 log.info("执行的设备数据===" + data + "控制信息" + openRelayStr);
-                int i = 0;
                 Date startCmdDate = new Date();
-                while (i < equipmentDTO.getCount()) {
+                String msg="";
+                for(int i=0;i< equipmentDTO.getCount();i++) {
                     //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
                     log.info("执行的令===" + i + "--控制命令" + openRelayStr);
-                    String msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器",equipmentDTO.getWaitTime());
+                    msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器",equipmentDTO.getWaitTime());
                     log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
                     if (StringUtil.isEmpty(msg)) {
-                        msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器",equipmentDTO.getWaitTime());
+                        log.error("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
                     }
+                    msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器",equipmentDTO.getWaitTime());
                     if (StringUtil.isEmpty(msg)) {
-                        i++;
-                    }else{
-                        return ServerResponse.createByErrorMessage(msg);
+                        log.error("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
                     }
                     if (System.currentTimeMillis() - startCmdDate.getTime() > equipmentDTO.getWaitTime()*1000 ) {
                         log.info("equipmentAddCount--加分超时" + equipmentDTO.getWaitTime()*1000);
@@ -133,6 +131,9 @@ public class EquipmentController implements IEquipmentController {
                     //if (cfu != null) {
                     //cfu.sync();
                     //}
+                }
+                if(StringUtil.isNotEmpty(msg)){
+                    return ServerResponse.createByErrorMessage(msg);
                 }
                 return ServerResponse.createBySuccess();
             } else {
@@ -180,25 +181,22 @@ public class EquipmentController implements IEquipmentController {
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.ok.ordinal());
                 dtuCmdDTO1.setRemark("完成");
                 hardwareWwjService.saveDtuCmd(dtuCmdDTO1);
-                break;
+                return "";
             }
             if (CollectionUtil.isEmpty(dtuCmdList)) {
-                msg = "没有数据";
-                break;
+
             }
             //过时了
             if (System.currentTimeMillis() - startDate.getTime() > waiteTime*1000) {
-                msg = "超过时间了";
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.bad.ordinal());
                 dtuCmdDTO1.setRemark(msg);
                 hardwareWwjService.saveDtuCmd(dtuCmdDTO1);
-                break;
+                return "超过时间了";
             }
 
         }
-        return msg;
     }
 
 }

@@ -36,7 +36,7 @@ public class OrderUtils {
      * 用户id和随机数总长度
      */
 
-    private static final int maxLength = 4;
+    private static final int maxLength = 10;
 
     /**
      * 根据id进行加密+加随机数组成固定长度编码

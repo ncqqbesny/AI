@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@Api(tags = "硬件WW操作接口")//描述UserController的信息
+@Api(tags = "业务WW操作接口")//描述UserController的信息
 @RequestMapping("/wwj")
 @ApiSort(value = 5)
 public class HardWwjController implements IHardWwjController {
