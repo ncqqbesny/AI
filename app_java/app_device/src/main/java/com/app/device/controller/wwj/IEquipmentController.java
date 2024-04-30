@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface IEquipmentController {
 
-     ServerResponse<?> equipment(DeviceVo deviceVo);
+    ServerResponse<?> equipment(DeviceVo deviceVo);
+
     ServerResponse<?> equipmentAddCount(EquipmentDTO equipmentDTO);
 }
