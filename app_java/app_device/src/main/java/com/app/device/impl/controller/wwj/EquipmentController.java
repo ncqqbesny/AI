@@ -112,12 +112,12 @@ public class EquipmentController implements IEquipmentController {
                     log.info("执行的令===" + i + "--控制命令" + openRelayStr);
                     msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器",equipmentDTO.getWaitTime());
                     log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
-                    if (StringUtil.isEmpty(msg)) {
+                    if (StringUtil.isNotEmpty(msg)) {
                         log.error("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
                     }
                     msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器",equipmentDTO.getWaitTime());
-                    if (StringUtil.isEmpty(msg)) {
-                        log.error("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
+                    if (StringUtil.isNotEmpty(msg)) {
+                        log.error("执行命令==="+colseRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
                     }
                     if (System.currentTimeMillis() - startCmdDate.getTime() > equipmentDTO.getWaitTime()*1000 ) {
                         log.info("equipmentAddCount--加分超时" + equipmentDTO.getWaitTime()*1000);
