@@ -1,0 +1,247 @@
+{
+	"pages": [
+	// {
+	// 	"path" : "pages/maptest/maptest",
+	// 	"style" : 
+	// 	{
+	// 		"navigationBarTitleText" : "",
+	// 		"enablePullDownRefresh" : false
+	// 	}
+	// },
+	{
+		"path": "pages/index/index",
+		"style": {
+			"navigationBarTitleText": "应急联-登录"
+		}
+	},
+	{
+		"path" : "pages/home/home",
+		"style" : 
+		{
+			"navigationBarTitleText": "首页",
+			"enablePullDownRefresh": true
+		}
+	},
+	{
+		"path" : "pages/equipment/equipment",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/equinfo/equinfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/members/members",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/peopleList/peopleList",
+		"style" : 
+		{
+			"navigationBarTitleText" : "人员列表",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/peopleInfo/peopleInfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addUser/addUser",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/roleList/roleList",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/roleInfo/roleInfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addRole/addRole",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/project/project",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addSmart/addSmart",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addProject/addProject",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/projectInfo/projectInfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/selfZone/selfZone",
+		"style" : 
+		{
+			"navigationBarBackgroundColor": "#005F7A",
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/editPassWord/editPassWord",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/orderList/orderList",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addOrder/addOrder",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/orderInfo/orderInfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/webView/webView",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/emergency/emergency",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/emergencyList/emergencyList",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/eventInfo/eventInfo",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	},
+	{
+		"path" : "pages/addEvent/addEvent",
+		"style" : 
+		{
+			"navigationBarTitleText" : "",
+			"enablePullDownRefresh" : false
+		}
+	}
+	],
+	 "tabBar": {
+				"color":"#87735F",
+				"selectedColor":"#87735F",
+				"borderStyle":"black",
+				"backgroundColor":"#FFFFFF",
+				"list": [
+					{
+						"pagePath":"pages/home/home",
+						"text":"首页",
+						"iconPath":"static/icon/home.png",
+						"selectedIconPath":"static/icon/home.png"
+					},{
+						"pagePath":"pages/emergencyList/emergencyList",
+						"text":"事件",
+						"iconPath":"static/icon/walk.png",
+						"selectedIconPath":"static/icon/walk.png"
+					},
+					
+					{
+						"pagePath":"pages/selfZone/selfZone",
+						"text":"我的",
+						"iconPath":"static/icon/self.png",
+						"selectedIconPath":"static/icon/self.png"
+					}
+				]	
+			 },
+	"globalStyle": {
+		"navigationStyle": "custom", 
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"app-plus": {
+			"background": "#efeff4"
+		}
+	}
+}
