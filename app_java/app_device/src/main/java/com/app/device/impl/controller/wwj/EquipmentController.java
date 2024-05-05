@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.app.device.controller.wwj.IEquipmentController;
 import com.app.device.domain.Device.DeviceDTO;
 import com.app.device.domain.Device.DeviceVo;
+import com.app.device.domain.HardWare.OperHardDTO;
 import com.app.device.domain.Wwj.DtuCmdDTO;
 import com.app.device.domain.Wwj.DtuCmdVO;
 import com.app.device.domain.Wwj.EquipmentDTO;
@@ -45,7 +46,7 @@ public class EquipmentController implements IEquipmentController {
     IHardwareWwjService hardwareWwjService;
 
     @Override
-    @ApiOperation(value = "控制设备", notes = "根据各种条件给设备发送指令 msg")
+    @ApiOperation(value = "指令控制设备不记录", notes = "根据各种条件给设备发送指令 msg")
     @RequestMapping(value = "/equipment", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperationSupport(order = 3) //排序
@@ -77,7 +78,7 @@ public class EquipmentController implements IEquipmentController {
 
 
     @Override
-    @ApiOperation(value = "给设备操作次数", notes = "根设备编号进行操作几次，只针对YRT")
+    @ApiOperation(value = "给设备操作继电器次数", notes = "根设备编号进行操作几次，只针对YRT（有问题）")
     @RequestMapping(value = "/equipmentAddCount", method = RequestMethod.POST)
     @ResponseBody
     @ApiOperationSupport(order = 3) //排序
@@ -108,34 +109,21 @@ public class EquipmentController implements IEquipmentController {
                 //ByteBuf colseMessage = Unpooled.copiedBuffer(colseRelayStr.getBytes());
                 List<DeviceDTO> data = (List<DeviceDTO>) list;
                 log.info("执行的设备数据===" + data + "控制信息" + openRelayStr);
-                String msg="";
-                for(int i=0;i< equipmentDTO.getCount();i++) {
+                String msg = "";
+                for (int i = 0; i < equipmentDTO.getCount(); i++) {
                     //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
                     log.info("执行的令===" + i + "--控制命令" + openRelayStr);
-                    msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器",equipmentDTO.getWaitTime());
+                    msg = exeCmd(data.get(0).getIp(), openRelayStr, "打开继电器", equipmentDTO.getWaitTime());
                     log.info("执行的令===" + i + "--控制命令" + colseRelayStr);
                     if (StringUtil.isNotEmpty(msg)) {
-<<<<<<< HEAD
-                        log.error("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
-=======
-                        log.warn("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
->>>>>>> 7aa4eea09152e377ab865cae1235222122a3a198
+                        log.error("执行命令===" + openRelayStr + "--url===" + data.get(0).getIp() + "--错误===" + msg);
+
                     }
-                    Thread.sleep(equipmentDTO.getWaitMidTime()*1000);
-                    msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器",equipmentDTO.getWaitTime());
+                    Thread.sleep(equipmentDTO.getWaitMidTime() * 1000);
+                    msg = exeCmd(data.get(0).getIp(), colseRelayStr, "关闭继电器", equipmentDTO.getWaitTime());
                     if (StringUtil.isNotEmpty(msg)) {
-<<<<<<< HEAD
-                        log.error("执行命令==="+colseRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
-                    }
-                    if (System.currentTimeMillis() - startCmdDate.getTime() > equipmentDTO.getWaitTime()*1000 ) {
-                        log.info("equipmentAddCount--加分超时" + equipmentDTO.getWaitTime()*1000);
-                        List<DeviceVo> listVo = new ArrayList<>();
-                        ListUtils.copyList(data, listVo, DeviceVo.class);
-                        deviceService.updateByExampleSelective(listVo);
-                        break;
-=======
-                        log.warn("执行命令==="+openRelayStr+"--url==="+data.get(0).getIp()+"--错误==="+msg);
->>>>>>> 7aa4eea09152e377ab865cae1235222122a3a198
+
+                        log.error("执行命令===" + colseRelayStr + "--url===" + data.get(0).getIp() + "--错误===" + msg);
                     }
                     //ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(Unpooled.copiedBuffer(colseRelayStr.getBytes()));
                     //ChannelFuture  cfu = ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(message);
@@ -143,14 +131,14 @@ public class EquipmentController implements IEquipmentController {
                     //cfu.sync();
                     //}
                 }
-                if(StringUtil.isNotEmpty(msg)){
+                if (StringUtil.isNotEmpty(msg)) {
                     List<DeviceVo> listVo = new ArrayList<>();
-                    DeviceVo deviceVo1=new DeviceVo();
+                    DeviceVo deviceVo1 = new DeviceVo();
                     deviceVo1.setDeviceSn(data.get(0).getDeviceSn());
                     deviceVo1.setRemark(msg);
                     listVo.add(deviceVo1);
                     deviceService.updateByExampleSelective(listVo);
-                    log.warn("执行加分出错了-错误==="+msg);
+                    log.warn("执行加分出错了-错误===" + msg);
                     return ServerResponse.createByErrorMessage(msg);
                 }
                 return ServerResponse.createBySuccess();
@@ -162,13 +150,58 @@ public class EquipmentController implements IEquipmentController {
         }
     }
 
-    private String exeCmd(String url, String cmd, String cmdDesc ,int waiteTime) {
+    @Override
+    @ApiOperation(value = "操作设备N次", notes = "操作设备继电器关闭N次")
+    @RequestMapping(value = "/operHardRelayCount", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperationSupport(order = 3) //排序
+    public ServerResponse<?> operHardRelayCount(@RequestBody OperHardDTO operHardDTO) {
+        try {
+            DeviceVo deviceVo = new DeviceVo();
+            deviceVo.setDeviceSn(operHardDTO.getDeviceSn());
+            List<?> list = deviceService.getSmartDeviceListBySearch(deviceVo);
+            if (CollectionUtil.isNotEmpty(list)) {
+                return ServerResponse.createByErrorMessage("没有找到注册的设备编号");
+            }
+            //需要给设备发送的 16进制数据
+            StringBuffer cmd = new StringBuffer();
+            cmd.append("ctron,");
+            if (null == operHardDTO.getCount()) {
+                return ServerResponse.createByErrorMessage("输入的操作次错误");
+            }
+            cmd.append(operHardDTO.getCount() + ",");
+            User context = UserInfoContext.getUser();
+            if (null != context) {
+                cmd.append(context.getUserId() + ",");
+            }
+            if (StringUtil.isEmpty(operHardDTO.getReqNo())) {
+                return ServerResponse.createByErrorMessage("没有输入请求编号");
+            }
+            cmd.append(operHardDTO.getReqNo());
+            log.info("operHardRelayCount--参数==" + cmd.toString());
+            //转码
+            ByteBuf message = Unpooled.copiedBuffer(cmd.toString().getBytes());
+            List<DeviceDTO> data = (List<DeviceDTO>) list;
+            log.info("operHardRelayCount 执行的设备数据===" + data);
+            //执行设备控制    根据product.getUrl() 上个类写入map  的key  取到map中的 ChannelHandlerContext  执行writeAndFlush发送数据
+            ServerHandler.map.get(data.get(0).getIp()).channel().writeAndFlush(message);
+            exeCmdRecord(data.get(0).getIp(), cmd.toString(), "yzg8task任务开关继电器次数指令",operHardDTO.getReqNo(),operHardDTO.getDeviceSn());
+            return ServerResponse.createBySuccess();
+
+        } catch (Exception e) {
+            return ServerResponse.createByErrorMessage("操作错误");
+        }
+    }
+
+    private String exeCmdRecord(String url, String cmd, String cmdDesc,String reqNo,String deviceSn) {
         String msg = "";
         String cmdNo = OrderUtils.getOrderCode(null);
         DtuCmdDTO dtuCmdDTO = new DtuCmdDTO();
         dtuCmdDTO.setCmdNo(cmdNo);
+        dtuCmdDTO.setReqNo(reqNo);
+        dtuCmdDTO.setDeviceSn(deviceSn);
         User context = UserInfoContext.getUser();
-        if(null!=context) {
+        if (null != context) {
             dtuCmdDTO.setUserId(context.getUserId());
             dtuCmdDTO.setMId(context.getMId());
         }
@@ -178,13 +211,45 @@ public class EquipmentController implements IEquipmentController {
         dtuCmdDTO.setStatus(DtuCmdStatusEnum.send.ordinal());
         dtuCmdDTO.setCmdDesc(cmdDesc);
         try {
-            log.info("开始执行命令==="+cmd+"---参数："+dtuCmdDTO);
+            log.info("exeCmdRecord开始执行命令===" + cmd + "---参数：" + dtuCmdDTO);
             ServerHandler.map.get(url).channel().writeAndFlush(Unpooled.copiedBuffer(cmd.getBytes()));
-        }catch (Exception e){
+        } catch (Exception e) {
             dtuCmdDTO.setStatus(DtuCmdStatusEnum.bad.ordinal());
-            dtuCmdDTO.setCmdDesc("长连接错误"+e.getMessage());
+            dtuCmdDTO.setCmdDesc("exeCmdRecord长连接错误" + e.getMessage());
             hardwareWwjService.saveDtuCmd(dtuCmdDTO);
-            log.error("长连接执行命令错误==="+cmd+"---参数==="+dtuCmdDTO);
+            log.error("exeCmdRecord长连接执行命令错误===" + cmd + "---参数===" + dtuCmdDTO);
+            return "长连接错误";
+        }
+        msg = hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+        if (StringUtil.isNotEmpty(msg)) {
+            return msg;
+        }
+        return "";
+    }
+
+    private String exeCmd(String url, String cmd, String cmdDesc, int waiteTime) {
+        String msg = "";
+        String cmdNo = OrderUtils.getOrderCode(null);
+        DtuCmdDTO dtuCmdDTO = new DtuCmdDTO();
+        dtuCmdDTO.setCmdNo(cmdNo);
+        User context = UserInfoContext.getUser();
+        if (null != context) {
+            dtuCmdDTO.setUserId(context.getUserId());
+            dtuCmdDTO.setMId(context.getMId());
+        }
+        dtuCmdDTO.setSendCmd(cmd);
+        dtuCmdDTO.setSendTime(new Date());
+        dtuCmdDTO.setSendUrl(url);
+        dtuCmdDTO.setStatus(DtuCmdStatusEnum.send.ordinal());
+        dtuCmdDTO.setCmdDesc(cmdDesc);
+        try {
+            log.info("开始执行命令===" + cmd + "---参数：" + dtuCmdDTO);
+            ServerHandler.map.get(url).channel().writeAndFlush(Unpooled.copiedBuffer(cmd.getBytes()));
+        } catch (Exception e) {
+            dtuCmdDTO.setStatus(DtuCmdStatusEnum.bad.ordinal());
+            dtuCmdDTO.setCmdDesc("长连接错误" + e.getMessage());
+            hardwareWwjService.saveDtuCmd(dtuCmdDTO);
+            log.error("长连接执行命令错误===" + cmd + "---参数===" + dtuCmdDTO);
             return "长连接错误";
         }
         msg = hardwareWwjService.saveDtuCmd(dtuCmdDTO);
@@ -195,7 +260,7 @@ public class EquipmentController implements IEquipmentController {
         Date startDate = new Date();
         while (true) {
             List<DtuCmdVO> dtuCmdList = hardwareWwjService.getDtuCmdList(dtuCmdDTO);
-            if (CollectionUtil.isNotEmpty(dtuCmdList) && null!=dtuCmdList.get(0).getRevCmd() && dtuCmdList.get(0).getRevCmd().contains("ok")) {
+            if (CollectionUtil.isNotEmpty(dtuCmdList) && null != dtuCmdList.get(0).getRevCmd() && dtuCmdList.get(0).getRevCmd().contains("ok")) {
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.ok.ordinal());
@@ -204,13 +269,13 @@ public class EquipmentController implements IEquipmentController {
                 return "";
             }
             //过时了
-            if (System.currentTimeMillis() - startDate.getTime() > waiteTime*1000) {
+            if (System.currentTimeMillis() - startDate.getTime() > waiteTime * 1000) {
                 DtuCmdDTO dtuCmdDTO1 = new DtuCmdDTO();
                 dtuCmdDTO1.setCmdNo(cmdNo);
                 dtuCmdDTO1.setStatus(DtuCmdStatusEnum.bad.ordinal());
                 dtuCmdDTO1.setRemark("超时了");
                 hardwareWwjService.saveDtuCmd(dtuCmdDTO1);
-                log.info("超时了==="+cmd+"---参数==="+dtuCmdDTO);
+                log.info("超时了===" + cmd + "---参数===" + dtuCmdDTO);
                 return "超过时间了";
             }
 

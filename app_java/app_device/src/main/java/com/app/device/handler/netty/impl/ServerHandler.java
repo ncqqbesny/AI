@@ -7,6 +7,7 @@ import com.app.device.services.IDeviceService;
 import com.app.device.services.wwj.IHardwareWwjService;
 import com.app.device.type.DeviceTypeEnum;
 import com.app.device.type.DtuCmdStatusEnum;
+import com.app.device.utils.DateUtils;
 import com.app.device.utils.StringUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -87,7 +88,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         }
         String rmsg;
         if (StringUtil.isEmpty(opMsg)) {
-            rmsg = "11 02 00 C4 00 16 ";//返回成功的信息
+            rmsg = "1 ";//返回成功的信息
         } else {
             rmsg = "0";//返回失败的信息
         }
@@ -106,6 +107,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     private String handleCallBackOrder(ChannelHandlerContext ctx, String readMessage ,String port) {
         String url = ctx.channel().remoteAddress().toString();//设备请求地址（个人将设备的请求地址当作 map 的key）
         DtuCmdDTO dtuCmdDto = new DtuCmdDTO();
+        dtuCmdDto.setStatus(DtuCmdStatusEnum.rev.ordinal());
+        if(readMessage.contains("ctron")){
+            String[] cmds=readMessage.split(",");
+            if(cmds.length>=6){
+                dtuCmdDto.setDeviceSn(cmds[0]);
+                dtuCmdDto.setReqNo(cmds[3]);
+            }
+            if(cmds[cmds.length-1].equals("ok")){
+                dtuCmdDto.setStatus(DtuCmdStatusEnum.ok.ordinal());
+            }
+        }
         dtuCmdDto.setRevCmd(readMessage);
         dtuCmdDto.setRevUrl(url);
         dtuCmdDto.setRevTime(new Date());
@@ -115,7 +127,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             dtuCmdDto.setUserId(context.getUserId());
             dtuCmdDto.setMId(context.getMId());
         }
-        dtuCmdDto.setStatus(DtuCmdStatusEnum.rev.ordinal());
         dtuCmdDto.setRemark("接收长连接端口号："+port);
         String msg = hardwareWwjService.saveDtuCmd(dtuCmdDto);
         return  msg;
@@ -132,17 +143,22 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     private String  addDeviceData(JSONObject json, String url, String servicePort, ByteBuf readMessage) {
         try {
             Map<String, String> dataMap = new HashMap<>();
-            //设备请求地址  存入数据库  下方controller层 通过设备id查询此地址   取到map种存入的 ChannelHandlerContext 实现数据下发
-            dataMap.put("mac", json.get("iccid").toString());
+            dataMap.put("opHappTm", DateUtils.getYYYYMMDDHHMMSSDate(new Date()));
+            if(null!=json.get("type") && json.get("type") .equals("1")) {
+                dataMap.put("displayDeviceName", json.get("desc").toString());
+            }else{
+                //设备请求地址  存入数据库  下方controller层 通过设备id查询此地址   取到map种存入的 ChannelHandlerContext 实现数据下发
+                dataMap.put("mac", json.get("iccid").toString());
+                dataMap.put("deviceSn", json.get("imei").toString());//设备数据1
+                dataMap.put("csq", json.get("csq").toString());
+                dataMap.put("fver", json.get("fver").toString());
+            }
             dataMap.put("deviceName", DeviceTypeEnum.wwj.toString());
             dataMap.put("gatewaySn", url);
             dataMap.put("port", servicePort);
             dataMap.put("ip", url);
             dataMap.put("stauts", "1");
             dataMap.put("upJson", json.toString());//获取的json数据
-            dataMap.put("deviceSn", json.get("imei").toString());//设备数据1
-            dataMap.put("csq", json.get("csq").toString());
-            dataMap.put("fver", json.get("fver").toString());
             dataMap.put("remark", readMessage.toString(CharsetUtil.UTF_8));//设备请求时原生数据
             deviceService.insertUpdate(dataMap, DeviceTypeEnum.wwj.toString(), 0);
         } catch (Exception e) {
