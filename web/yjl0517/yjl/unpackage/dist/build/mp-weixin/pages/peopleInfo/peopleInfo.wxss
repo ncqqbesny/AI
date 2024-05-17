@@ -1,0 +1,1 @@
+.container{min-height:100vh}.container::before{content:"";display:table;height:0}.from{width:650rpx;padding:25rpx;margin:100rpx auto;background:#fff;border-radius:25rpx;box-shadow:5rpx 5rpx 5rpx #ccc}.uni-forms-item__label{width:200rpx}.user_info{width:90%;margin:0 auto}.delBtn{margin:15rpx 0}.from .btn{width:650rpx}.from .input{border-radius:15rpx}

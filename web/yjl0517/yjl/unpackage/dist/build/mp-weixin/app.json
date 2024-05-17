@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/home/home",
+    "pages/equipment/equipment",
+    "pages/equinfo/equinfo",
+    "pages/members/members",
+    "pages/peopleList/peopleList",
+    "pages/peopleInfo/peopleInfo",
+    "pages/addUser/addUser",
+    "pages/roleList/roleList",
+    "pages/roleInfo/roleInfo",
+    "pages/addRole/addRole",
+    "pages/project/project",
+    "pages/addSmart/addSmart",
+    "pages/addProject/addProject",
+    "pages/projectInfo/projectInfo",
+    "pages/selfZone/selfZone",
+    "pages/editPassWord/editPassWord",
+    "pages/orderList/orderList",
+    "pages/addOrder/addOrder",
+    "pages/orderInfo/orderInfo",
+    "pages/webView/webView",
+    "pages/emergency/emergency",
+    "pages/emergencyList/emergencyList",
+    "pages/eventInfo/eventInfo",
+    "pages/addEvent/addEvent"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#87735F",
+    "selectedColor": "#87735F",
+    "borderStyle": "black",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "static/icon/home.png",
+        "selectedIconPath": "static/icon/home.png"
+      },
+      {
+        "pagePath": "pages/emergencyList/emergencyList",
+        "text": "事件",
+        "iconPath": "static/icon/walk.png",
+        "selectedIconPath": "static/icon/walk.png"
+      },
+      {
+        "pagePath": "pages/selfZone/selfZone",
+        "text": "我的",
+        "iconPath": "static/icon/self.png",
+        "selectedIconPath": "static/icon/self.png"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {}
+}

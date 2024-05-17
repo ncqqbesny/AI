@@ -1,0 +1,23 @@
+@font-face {
+	font-family: 'alihei';
+	src: url('https://yjl.linkom.com.cn/loadfile/ht.ttf') format('truetype');
+}
+
+
+
+@font-face {
+	font-family: 'alyuan';
+	src: url('https://yjl.linkom.com.cn/loadfile/fy.ttf') format('truetype');
+} 
+/* h5跨域 */
+/*@font-face {
+	font-family: 'alihei';
+	src: url('/yjlcdn/loadfile/ht.ttf') format('truetype');
+}
+
+
+
+@font-face {
+	font-family: 'alyuan';
+	src: url('/yjlcdn/loadfile/fy.ttf') format('truetype');
+}*/

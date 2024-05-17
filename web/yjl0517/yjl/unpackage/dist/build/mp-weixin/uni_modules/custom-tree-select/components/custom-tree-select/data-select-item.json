@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "uni-icons": "/uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "data-select-item": "/uni_modules/custom-tree-select/components/custom-tree-select/data-select-item"
+  }
+}
