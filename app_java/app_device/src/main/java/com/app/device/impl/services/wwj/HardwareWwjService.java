@@ -161,9 +161,13 @@ public class HardwareWwjService implements IHardwareWwjService {
         //queryWrapper组装查询where条件
         LambdaQueryWrapper<DtuCmdPO> queryWrapper = new LambdaQueryWrapper<>();
         //针对回写命令。
-        if(null!= dtuCmdDto && DtuCmdStatusEnum.rev.ordinal()==dtuCmdDto.getStatus()){
+        if(null!= dtuCmdDto && DtuCmdStatusEnum.rev.ordinal()==dtuCmdDto.getStatus() && StringUtil.isEmpty(dtuCmdDto.getDeviceSn()) &&  StringUtil.isEmpty(dtuCmdDto.getReqNo())){
             queryWrapper.isNotNull(DtuCmdPO::getSendCmd).eq(DtuCmdPO::getStatus, DtuCmdStatusEnum.send.ordinal())
             .eq(DtuCmdPO::getSendUrl, dtuCmdDto.getRevUrl());
+        }
+        //针对执行有请求单号和设备编号的命令的信息
+        if(StringUtil.isNotEmpty(dtuCmdDto.getDeviceSn()) &&  StringUtil.isNotEmpty(dtuCmdDto.getReqNo())){
+            queryWrapper.eq(DtuCmdPO::getDeviceSn, dtuCmdDto.getDeviceSn()).eq(DtuCmdPO::getReqNo, dtuCmdDto.getReqNo());
         }
         if (StringUtil.isNotEmpty(dtuCmdDto.getCmdNo())) {
             queryWrapper.eq(DtuCmdPO::getCmdNo, dtuCmdDto.getCmdNo());

@@ -130,8 +130,12 @@ public class DeviceServiceImpl implements IDeviceService {
         }
         deviceDTO.setOpHappTm(DateUtils.getDateByString(dataMap.get("collectTime"), DateUtils.DATE_FORMAT));
         //deviceDTO.setCurrentTime(DateUtils.getDateByString(dataMap.get("collectTime"), DateUtils.DATE_FORMAT));
+        //业务时间
         if (StringUtil.isNotEmpty(dataMap.get("reportAt"))) {
             deviceDTO.setOpHappTm(DateUtils.convertToDateTime(dataMap.get("reportAt")));
+        }
+        if (StringUtil.isNotEmpty(dataMap.get("opHappTm"))) {
+            deviceDTO.setOpHappTm(DateUtils.convertToDateTime(dataMap.get("opHappTm")));
         }
         //状态处理
         if (StringUtil.isNotEmpty(dataMap.get("stauts"))) {
@@ -201,6 +205,9 @@ public class DeviceServiceImpl implements IDeviceService {
         QueryWrapper<DeviceDTO> queryWrapper = new QueryWrapper<>();
         queryWrapper.and(deviceDTOQueryWrapper -> deviceDTOQueryWrapper.eq("GID", deviceDTO.getGid()))
                 .or(deviceDTOQueryWrapper1 -> deviceDTOQueryWrapper1.eq("DEVICETYPECODE", deviceTypeDTOList.get(0).getTypeCode()).eq("DEVICESN", deviceDTO.getDeviceSn()));
+        if( StringUtil.isNotEmpty(deviceDTO.getIp()) &&  StringUtil.isEmpty(deviceDTO.getDeviceSn())){
+            queryWrapper.and(deviceDTOQueryWrapper -> deviceDTOQueryWrapper.eq("IP",deviceDTO.getIp())) ;
+        }
         List<DeviceDTO> list = deviceDao.selectList(queryWrapper);
         //在线刷新间隔时间
         if (StringUtil.isEmpty(deviceDTO.getInterval()) && StringUtil.isNotEmpty(deviceDTO.getDeviceSn()) && CollectionUtil.isNotEmpty(list)) {

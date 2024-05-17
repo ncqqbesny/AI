@@ -20,6 +20,12 @@ public class DtuCmdPO {
     @ApiModelProperty(value = "单号")
     @TableField(value = "cmd_no")
     private String cmdNo;
+    @ApiModelProperty(value = "请求单号")
+    @TableField(value = "req_no")
+    private String reqNo;
+    @ApiModelProperty(value = "设备编号")
+    @TableField(value = "device_sn")
+    private String deviceSn;
     @ApiModelProperty(value = "项目id")
     @TableField(value = "m_id")
     private Integer mId;
